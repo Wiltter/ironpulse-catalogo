@@ -33,7 +33,9 @@ def main():
         "productos": pedir("productos?select=*&order=orden"),
         "piezas": pedir("piezas?select=*&order=producto_id,orden"),
         "config": pedir("config?select=*&order=clave"),
-        "precios": pedir("rpc/precios_publicos", b"{}"),
+        # el respaldo va SIN promos: si la base se cae, mejor precio de lista que una oferta vencida
+        "precios": [{"producto_id": x["producto_id"], "pieza_id": x["pieza_id"], "precio": x["precio_lista"]}
+                    for x in pedir("rpc/catalogo_precios", b"{}")],
     }
     if not datos["productos"]:
         raise SystemExit("La base devolvió 0 productos: no piso el respaldo.")

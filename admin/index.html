@@ -35,7 +35,9 @@ a{color:var(--yellow)}
 .card h1{margin:0 0 4px;font:800 30px/1 var(--display);text-transform:uppercase}
 .card p{margin:0 0 18px;color:var(--muted)}
 label.f{display:block;margin:0 0 12px;font-size:13px;color:var(--muted)}
-label.f input{display:block;width:100%;margin-top:4px}
+label.f input,label.f select{display:block;width:100%;margin-top:4px}
+label.f input[type="checkbox"]{display:inline-block;width:18px;height:18px;margin:0;flex:none;accent-color:var(--yellow)}
+.alcance input[type="checkbox"]{width:18px;height:18px;accent-color:var(--yellow)}
 input,select,textarea{background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
 input:focus,select:focus,textarea:focus{border-color:var(--yellow);outline:none}
 textarea{width:100%;resize:vertical}
@@ -110,6 +112,18 @@ tr.grupo td{background:var(--steel);font:700 13px/1 var(--display);letter-spacin
 .lib img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
 .lib span{display:block;font-size:11px;color:var(--muted);padding:3px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hist td{font-size:14px}
+/* promos */
+:root{--promo:#ff5a3c}
+.badge.promo{border-color:var(--promo);color:var(--promo)}
+.promo-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.promo-card:last-child{border-bottom:0}
+.promo-card h4{margin:0;font:800 20px/1.1 var(--display);text-transform:uppercase}
+.promo-card .meta{color:var(--muted);font-size:14px}
+.promo-card .acc{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.alcance{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:4px 14px;margin-top:8px}
+.alcance label{display:flex;align-items:center;gap:8px;font-size:14px;padding:3px 0}
+.alcance small{color:var(--muted)}
+.prev td.bad{color:var(--bad)} .prev td.warn{color:var(--warn)}
 .hist .cambio{color:var(--muted)}
 .hist .cambio b{color:var(--paper);font-weight:600}
 @media (max-width:700px){h2{font-size:26px}.me span{display:none}}
@@ -164,6 +178,7 @@ tr.grupo td{background:var(--steel);font:700 13px/1 var(--display);letter-spacin
       <img src="../img/logo-ironpulse.png" alt="IRON PULSE">
       <nav class="tabs" role="tablist" id="tabs">
         <button role="tab" data-t="precios">Precios</button>
+        <button role="tab" data-t="promos">Promos</button>
         <button role="tab" data-t="materiales">Materiales</button>
         <button role="tab" data-t="productos">Productos</button>
         <button role="tab" data-t="pagina">Página</button>
@@ -270,9 +285,11 @@ let YO = null;
 async function cargar(){
   const q = (t, o) => sb.from(t).select('*').order(o || 'id');
   const r = await Promise.all([q('materiales', 'nombre'), q('receta'), q('costos_producto', 'orden'), q('precios'), q('ajustes', 'clave'),
-                               q('productos', 'orden'), q('piezas', 'orden'), q('config', 'clave'), q('admins', 'creado_en')]);
+                               q('productos', 'orden'), q('piezas', 'orden'), q('config', 'clave'), q('admins', 'creado_en'),
+                               q('promociones', 'desde'), q('promocion_items')]);
   const err = r.find(x => x.error); if (err) throw err.error;
-  [D.materiales, D.receta, D.costos, D.precios, D.ajustes, D.productos, D.piezas, D.config, D.admins] = r.map(x => x.data);
+  [D.materiales, D.receta, D.costos, D.precios, D.ajustes, D.productos, D.piezas, D.config, D.admins,
+   D.promociones, D.promocion_items] = r.map(x => x.data);
 }
 const tarifa = () => +(D.ajustes.find(a => a.clave === 'tarifa_hora')?.valor || 0);
 const mat = id => D.materiales.find(m => m.id === id);
@@ -333,7 +350,7 @@ function ir(t){
   TAB = t; history.replaceState(null, '', '#' + t);
   const m = $('#main'); m.onclick = m.onchange = m.oninput = null;   // cada pestaña pone los suyos
   [...$('#tabs').children].forEach(b => b.setAttribute('aria-selected', b.dataset.t === t));
-  ({precios: vPrecios, materiales: vMateriales, productos: vProductos, pagina: vPagina, usuarios: vUsuarios, historial: vHistorial})[t]();
+  ({precios: vPrecios, promos: vPromos, materiales: vMateriales, productos: vProductos, pagina: vPagina, usuarios: vUsuarios, historial: vHistorial})[t]();
 }
 
 /* ---------- Precios ---------- */
@@ -352,7 +369,7 @@ function vPrecios(){
       <td class="num"><input class="n" data-f="precio_manual" value="${manual ? numIn(f.p.precio_manual) : ''}" placeholder="${f.sug ? 'calculado' : 'sin precio'}" aria-label="Precio fijo"></td>
       <td class="num big">${money(f.pub)}</td>
       <td class="num">${f.margen == null ? '—' : `<span class="badge ${baja ? 'warn' : 'ok'}">${pct(f.margen)}</span>`}</td>
-      <td>${manual ? `<span class="badge y">fijo a mano</span> <button class="link" data-a="calc">volver al calculado</button>` : f.sug ? '<span class="badge">calculado</span>' : '<span class="badge">consultar</span>'}</td>
+      <td>${manual ? `<span class="badge y">fijo a mano</span> <button class="link" data-a="calc">volver al calculado</button>` : f.sug ? '<span class="badge">calculado</span>' : '<span class="badge">consultar</span>'}${(() => { const pv = promoVigente(ref); return pv ? ` <span class="badge promo" title="${esc(pv.promo.etiqueta)}">promo: ${esc(pv.final != null && pv.final < f.pub ? money(pv.final) : pv.promo.etiqueta)}</span>` : ''; })()}</td>
     </tr>`;
   };
   $('#main').innerHTML = `
@@ -619,6 +636,155 @@ async function subirFoto(file){
   } catch (e){ toast('No se subió: ' + (e.message || e), true); return null; }
 }
 
+/* ---------- Promos ---------- */
+// espejo de catalogo_precios() de la base: misma regla para elegir la promo
+const estadoPromo = (pr, t = Date.now()) => !pr.activa ? 'pausada' : new Date(pr.desde) > t ? 'programada'
+  : pr.hasta && new Date(pr.hasta) <= t ? 'terminada' : 'activa';
+const aplica = (pr, ref, items = D.promocion_items.filter(i => i.promocion_id === pr.id)) => pr.todo_el_catalogo ||
+  items.some(i => ref.pieza_id ? i.pieza_id === ref.pieza_id : i.producto_id === ref.producto_id && !i.pieza_id);
+function conPromo(precio, pr, red){
+  if (precio == null) return null;
+  if (pr.tipo === 'porcentaje'){ const r = Math.max(red || 1000, 1); return Math.max(Math.round(precio * (1 - pr.valor / 100) / r) * r, 0); }
+  if (pr.tipo === 'monto') return Math.max(precio - pr.valor, 0);
+  return precio;
+}
+function promoVigente(ref){
+  const f = fila(ref), red = f.p?.redondeo || 1000;
+  const cands = D.promociones.filter(pr => estadoPromo(pr) === 'activa' && aplica(pr, ref))
+    .map(pr => ({promo: pr, final: conPromo(f.pub, pr, red), solo: pr.tipo === 'ninguno' || f.pub == null}));
+  cands.sort((a, b) => (a.solo - b.solo) || ((a.final ?? Infinity) - (b.final ?? Infinity)) || (b.promo.id - a.promo.id));
+  return cands[0] || null;
+}
+const descPromo = pr => pr.tipo === 'porcentaje' ? `${(+pr.valor).toLocaleString('es-AR')}% OFF` : pr.tipo === 'monto' ? `${money(+pr.valor)} OFF` : 'solo etiqueta';
+const aLocal = iso => { if (!iso) return ''; const d = new Date(iso); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); };
+const fecha = iso => iso ? new Date(iso).toLocaleString('es-AR', {day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'}) : '';
+const todosLosItems = () => [
+  ...[...D.productos].sort((a, b) => a.orden - b.orden).map(p => ({ref: {producto_id: p.id}, nombre: p.nombre, grupo: 'Productos'})),
+  ...D.piezas.filter(z => z.tipo === 'opcional').map(z => ({ref: {pieza_id: z.id}, nombre: z.pieza,
+      grupo: 'Opcionales de ' + (D.productos.find(p => p.id === z.producto_id)?.nombre || '')}))];
+const claveRef = ref => ref.pieza_id ? 'z' + ref.pieza_id : 'p' + ref.producto_id;
+
+let BORRADOR = null;   // promo que se está creando o editando
+function alcanceTxt(pr){
+  if (pr.todo_el_catalogo) return 'Todo el catálogo';
+  const its = D.promocion_items.filter(i => i.promocion_id === pr.id).map(i => i.pieza_id
+    ? (D.piezas.find(z => z.id === i.pieza_id)?.pieza || '?') + ' (opc.)' : D.productos.find(p => p.id === i.producto_id)?.nombre || '?');
+  return its.length ? its.slice(0, 3).join(', ') + (its.length > 3 ? ` +${its.length - 3}` : '') : 'Sin productos';
+}
+function vPromos(){
+  const grupos = {activa: 'Activas ahora', programada: 'Programadas', pausada: 'Pausadas', terminada: 'Terminadas'};
+  const BADGE = {activa: 'ok', programada: 'y', pausada: '', terminada: ''};
+  const lista = Object.entries(grupos).map(([k, titulo]) => {
+    const prs = D.promociones.filter(pr => estadoPromo(pr) === k).sort((a, b) => new Date(b.desde) - new Date(a.desde));
+    if (!prs.length) return '';
+    return `<div class="panel"><h3 style="margin-top:0">${titulo}</h3>${prs.map(pr => `
+      <div class="promo-card" data-id="${pr.id}">
+        <div><h4>${esc(pr.etiqueta)} <span class="badge promo">${esc(descPromo(pr))}</span> <span class="badge ${BADGE[k]}">${k}</span></h4>
+          <div class="meta">${fecha(pr.desde)} → ${pr.hasta ? fecha(pr.hasta) : 'sin fecha de fin'}${pr.cuenta_regresiva ? ' · con cuenta regresiva' : ''} · ${esc(alcanceTxt(pr))}</div></div>
+        <div class="acc">
+          <button class="btn sm" data-a="editar">Editar</button>
+          ${k !== 'terminada' ? `<button class="btn sm" data-a="pausa">${pr.activa ? 'Pausar' : 'Reanudar'}</button>` : ''}
+          <button class="btn sm" data-a="duplicar">Duplicar</button>
+          <button class="btn del" data-a="borrar" aria-label="Borrar"><svg class="ico"><use href="#i-trash"/></svg></button>
+        </div>
+      </div>`).join('')}</div>`;
+  }).join('');
+  $('#main').innerHTML = `
+    <h2>Promos</h2>
+    <p class="sub">Etiquetas de tiempo limitado y descuentos. Se prenden y se apagan solas según las fechas; el catálogo no muestra una promo programada hasta que empieza. Si a un producto le tocan varias, gana la que deja el precio más bajo.</p>
+    <div class="row" style="margin-bottom:16px"><button class="btn pri" data-a="nueva"><svg class="ico"><use href="#i-plus"/></svg>Nueva promo</button></div>
+    <div id="editor"></div>
+    ${lista || '<div class="panel">Todavía no hay promos.</div>'}`;
+  if (BORRADOR) dibujarEditor();
+  $('#main').onclick = async e => {
+    const b = e.target.closest('[data-a]'); if (!b) return;
+    const a = b.dataset.a, card = b.closest('.promo-card'), pr = card && D.promociones.find(x => x.id === +card.dataset.id);
+    if (a === 'nueva'){ const d = new Date(); d.setSeconds(0, 0);
+      BORRADOR = {etiqueta: '', tipo: 'porcentaje', valor: 10, desde: d.toISOString(), hasta: null, cuenta_regresiva: false, todo_el_catalogo: false, activa: true, items: new Set()};
+      dibujarEditor(); $('#editor').scrollIntoView({behavior: 'smooth'}); return; }
+    if (a === 'editar' || a === 'duplicar'){
+      const items = new Set(D.promocion_items.filter(i => i.promocion_id === pr.id).map(i => claveRef(i.pieza_id ? {pieza_id: i.pieza_id} : {producto_id: i.producto_id})));
+      BORRADOR = {...pr, items, ...(a === 'duplicar' ? {id: undefined, etiqueta: pr.etiqueta + ' (copia)', activa: false} : {})};
+      dibujarEditor(); $('#editor').scrollIntoView({behavior: 'smooth'}); return; }
+    if (a === 'pausa'){ if (await guardar('promociones', pr.id, {activa: !pr.activa})) vPromos(); return; }
+    if (a === 'borrar'){ if (confirm(`¿Borrar la promo "${pr.etiqueta}"? Si querés guardarla para otra vez, mejor pausala.`) && await borrar('promociones', pr.id)){
+      D.promocion_items = D.promocion_items.filter(i => i.promocion_id !== pr.id); vPromos(); } return; }
+    if (a === 'cancelar'){ BORRADOR = null; vPromos(); return; }
+    if (a === 'guardarPromo') guardarPromo();
+  };
+  $('#main').onchange = $('#main').oninput = e => { if (BORRADOR && e.target.closest('#editor')) leerEditor(e); };
+}
+function dibujarEditor(){
+  const B = BORRADOR, todos = todosLosItems();
+  const grupos = [...new Set(todos.map(t => t.grupo))];
+  $('#editor').innerHTML = `<div class="panel" style="border-color:var(--promo)">
+    <h3 style="margin-top:0">${B.id ? 'Editar promo' : 'Nueva promo'}</h3>
+    <div class="grid2">
+      <label class="f">Etiqueta (lo que ve el cliente)<input data-p="etiqueta" value="${esc(B.etiqueta)}" placeholder="Ej.: Oferta de primavera · Últimas unidades" maxlength="40"></label>
+      <label class="f">Tipo<select data-p="tipo">
+        <option value="porcentaje"${B.tipo === 'porcentaje' ? ' selected' : ''}>% de descuento</option>
+        <option value="monto"${B.tipo === 'monto' ? ' selected' : ''}>$ de descuento</option>
+        <option value="ninguno"${B.tipo === 'ninguno' ? ' selected' : ''}>Solo etiqueta, sin descuento</option></select></label>
+      <label class="f"${B.tipo === 'ninguno' ? ' hidden' : ''}>${B.tipo === 'monto' ? 'Descuento en $' : 'Descuento en %'}<input data-p="valor" value="${numIn(B.valor)}"></label>
+      <label class="f">Empieza<input type="datetime-local" data-p="desde" value="${aLocal(B.desde)}"></label>
+      <label class="f">Termina (vacío = sin fecha de fin)<input type="datetime-local" data-p="hasta" value="${aLocal(B.hasta)}"></label>
+      <label class="f" style="display:flex;align-items:center;gap:8px;margin-top:18px"><input type="checkbox" data-p="cuenta_regresiva"${B.cuenta_regresiva ? ' checked' : ''}${B.hasta ? '' : ' disabled'}> Mostrar cuenta regresiva al cliente${B.hasta ? '' : ' <small style="color:var(--muted)">(necesita fecha de fin)</small>'}</label>
+    </div>
+    <label class="f" style="display:flex;align-items:center;gap:8px"><input type="checkbox" data-p="todo_el_catalogo"${B.todo_el_catalogo ? ' checked' : ''}> <b>Todo el catálogo</b> (productos y opcionales)</label>
+    ${B.todo_el_catalogo ? '' : grupos.map(g => `<div class="f" style="margin:10px 0 0">${esc(g)}</div><div class="alcance">${todos.filter(t => t.grupo === g).map(t =>
+      `<label><input type="checkbox" data-item="${claveRef(t.ref)}"${B.items.has(claveRef(t.ref)) ? ' checked' : ''}> ${esc(t.nombre)}</label>`).join('')}</div>`).join('')}
+    <h3>Cómo queda</h3><div class="scroll" id="previa"></div>
+    <div class="row" style="margin-top:14px"><button class="btn pri" data-a="guardarPromo">${B.id ? 'Guardar cambios' : 'Crear promo'}</button><button class="btn" data-a="cancelar">Cancelar</button><span class="msg" id="pMsg" style="margin:0"></span></div>
+  </div>`;
+  dibujarPrevia();
+}
+function dibujarPrevia(){
+  const B = BORRADOR;
+  const afectados = todosLosItems().filter(t => B.todo_el_catalogo || B.items.has(claveRef(t.ref)));
+  if (!afectados.length){ $('#previa').innerHTML = '<p class="sub" style="margin:0">Elegí a qué productos se aplica.</p>'; return; }
+  $('#previa').innerHTML = `<table class="prev"><thead><tr><th>Producto</th><th class="num">Precio hoy</th><th class="num">Con la promo</th><th class="num">Costo</th><th class="num">Margen con la promo</th></tr></thead><tbody>${afectados.map(t => {
+    const f = fila(t.ref), fin = conPromo(f.pub, {tipo: B.tipo, valor: +B.valor || 0}, f.p?.redondeo || 1000);
+    const m = f.costo > 0 && fin != null ? fin / f.costo - 1 : null;
+    const cls = m == null ? '' : m < 0 ? 'bad' : m < 0.2 ? 'warn' : '';
+    return `<tr><td>${esc(t.nombre)}</td><td class="num">${money(f.pub)}</td><td class="num"><b>${f.pub == null ? 'solo etiqueta' : money(fin)}</b></td>
+      <td class="num">${f.costo > 0 ? money(f.costo) : '—'}</td><td class="num ${cls}">${m == null ? '—' : pct(m) + (m < 0 ? ' · ¡debajo del costo!' : '')}</td></tr>`; }).join('')}</tbody></table>`;
+}
+function leerEditor(e){
+  const B = BORRADOR, el = e.target;
+  if (el.dataset.item){ el.checked ? B.items.add(el.dataset.item) : B.items.delete(el.dataset.item); dibujarPrevia(); return; }
+  const k = el.dataset.p; if (!k) return;
+  if (el.type === 'checkbox') B[k] = el.checked;
+  else if (k === 'valor') B.valor = num(el.value) ?? 0;
+  else if (k === 'desde' || k === 'hasta') B[k] = el.value ? new Date(el.value).toISOString() : null;
+  else B[k] = el.value;
+  if (k === 'hasta' && !B.hasta) B.cuenta_regresiva = false;
+  // redibujar solo lo que cambia la estructura (en "input" de texto no, para no perder el foco)
+  if (e.type === 'change' && ['tipo','hasta','todo_el_catalogo'].includes(k)) dibujarEditor(); else dibujarPrevia();
+}
+async function guardarPromo(){
+  const B = BORRADOR, msg = $('#pMsg');
+  const error = !B.etiqueta.trim() ? 'Poné una etiqueta.' : B.tipo !== 'ninguno' && !(B.valor > 0) ? 'El descuento tiene que ser mayor a 0.'
+    : B.tipo === 'porcentaje' && B.valor >= 100 ? 'El porcentaje tiene que ser menor a 100.' : !B.desde ? 'Poné cuándo empieza.'
+    : B.hasta && new Date(B.hasta) <= new Date(B.desde) ? 'Termina antes de empezar.' : !B.todo_el_catalogo && !B.items.size ? 'Elegí al menos un producto.' : null;
+  if (error){ msg.className = 'msg bad'; msg.textContent = error; return; }
+  const datos = {etiqueta: B.etiqueta.trim(), tipo: B.tipo, valor: B.tipo === 'ninguno' ? 0 : B.valor, desde: B.desde, hasta: B.hasta,
+                 cuenta_regresiva: !!(B.hasta && B.cuenta_regresiva), todo_el_catalogo: B.todo_el_catalogo, activa: B.activa ?? true};
+  let pr;
+  if (B.id){ if (!await guardar('promociones', B.id, datos)) return; pr = D.promociones.find(x => x.id === B.id); }
+  else { pr = await insertar('promociones', datos); if (!pr) return; }
+  // los productos de la promo: se reemplazan enteros
+  const {error: e1} = await sb.from('promocion_items').delete().eq('promocion_id', pr.id);
+  if (e1) return toast('No se guardaron los productos: ' + e1.message, true);
+  D.promocion_items = D.promocion_items.filter(i => i.promocion_id !== pr.id);
+  if (!B.todo_el_catalogo && B.items.size){
+    const filas = [...B.items].map(k => k[0] === 'z' ? {promocion_id: pr.id, pieza_id: +k.slice(1)} : {promocion_id: pr.id, producto_id: k.slice(1)});
+    const {data, error: e2} = await sb.from('promocion_items').insert(filas).select();
+    if (e2) return toast('No se guardaron los productos: ' + e2.message, true);
+    D.promocion_items.push(...data);
+  }
+  toast(B.id ? 'Promo guardada' : 'Promo creada'); BORRADOR = null; vPromos();
+}
+
 /* ---------- Página (config) ---------- */
 function vPagina(){
   const c = k => D.config.find(x => x.clave === k)?.valor || '';
@@ -671,7 +837,7 @@ async function arrancar(){
   YO = yo; $('#meMail').textContent = session.user.email;
   try { await cargar(); } catch (e){ toast('Error al cargar: ' + e.message, true); return; }
   mostrar('app');
-  const t = location.hash.slice(1); ir(['precios','materiales','productos','pagina','usuarios','historial'].includes(t) ? t : 'precios');
+  const t = location.hash.slice(1); ir(['precios','promos','materiales','productos','pagina','usuarios','historial'].includes(t) ? t : 'precios');
 }
 if (!/type=recovery/.test(location.hash)) arrancar();
 </script>

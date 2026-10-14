@@ -119,6 +119,22 @@ a{color:inherit}
 }
 .piece:active{transform:scale(.98)}
 
+/* Promos */
+:root{--promo:#ff5a3c}
+.promo{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:18px 0 -6px}
+.promo .et{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--promo);color:#fff;font:700 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase}
+.promo .et .ico{width:16px;height:16px}
+.promo .ds{padding:5px 10px;border-radius:999px;border:1px solid var(--promo);color:var(--promo);font:800 15px/1 var(--display);letter-spacing:.04em}
+.promo .cd{display:inline-flex;align-items:center;gap:6px;color:#d6d6d2;font-size:15px}
+.promo .cd .ico{width:17px;height:17px;color:var(--promo)}
+s.tachado{display:block;color:var(--muted-2);font:600 19px/1.1 var(--display);text-decoration-thickness:2px;margin-bottom:2px}
+.oc .row s.tachado{font-size:16px}
+.piece .tx s{color:var(--muted-2);margin-right:4px}
+.tab .tp{position:absolute;top:-9px;right:10px;padding:3px 8px;border-radius:999px;background:var(--promo);color:#fff;font:700 11px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;max-width:70%;overflow:hidden;text-overflow:ellipsis}
+.tabs{padding-top:12px}
+.oc .cover .pb{position:absolute;left:10px;top:10px;max-width:calc(100% - 20px);padding:5px 10px;border-radius:999px;background:var(--promo);color:#fff;font:700 13px/1.1 var(--display);letter-spacing:.06em;text-transform:uppercase}
+.dock .t s{color:var(--muted-2);margin-right:6px}
+
 /* Opcionales */
 .extras{margin-top:26px}
 .piece.opt{display:flex;flex-direction:column}
@@ -264,6 +280,8 @@ footer .legal{flex-basis:100%;color:var(--muted-2);font-size:13px}
   <symbol id="i-zoom" viewBox="0 0 24 24"><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M7 10l6 0"/><path d="M10 7l0 6"/><path d="M21 21l-6 -6"/></symbol>
   <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6l6 -6"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 7v5l3 3"/></symbol>
   <symbol id="i-max" viewBox="0 0 24 24"><path d="M16 4l4 0l0 4"/><path d="M14 10l6 -6"/><path d="M8 20l-4 0l0 -4"/><path d="M4 20l6 -6"/><path d="M16 20l4 0l0 -4"/><path d="M14 14l6 6"/><path d="M8 4l-4 0l0 4"/><path d="M4 4l6 6"/></symbol>
 </svg>
 
@@ -306,8 +324,9 @@ footer .legal{flex-basis:100%;color:var(--muted-2);font-size:13px}
         <h2 id="pName">&nbsp;</h2>
         <span class="tag" id="pTag"></span>
         <p class="bajada" id="pBajada"></p>
+        <div class="promo" id="pPromo" hidden></div>
         <div class="buy">
-          <div class="price"><b id="pPrice"></b><small id="pNota"></small></div>
+          <div class="price"><span id="pLista"></span><b id="pPrice"></b><small id="pNota"></small></div>
           <a class="btn-wa" id="pWa" href="#" target="_blank" rel="noopener"><svg class="ico"><use href="#i-wa"/></svg>Consultar</a>
         </div>
         <h3 class="h3">Qué trae <small id="piecesHint">Pasá el mouse para verla grande</small></h3>
@@ -405,7 +424,7 @@ async function fetchBase(ms){
   try {
     const [productos, piezas, config, precios] = await Promise.all([
       get('productos?select=*'), get('piezas?select=*'), get('config?select=*'),
-      get('rpc/precios_publicos', {method: 'POST', headers: {'content-type': 'application/json'}, body: '{}'})]);
+      get('rpc/catalogo_precios', {method: 'POST', headers: {'content-type': 'application/json'}, body: '{}'})]);
     if (!productos.length) throw new Error('vacía');
     return {productos, piezas, config, precios};
   } finally { clearTimeout(t); }
@@ -414,8 +433,14 @@ async function fetchBase(ms){
 async function loadData(){
   let src = window.CATALOGO_RESPALDO, origen = 'respaldo';
   try { src = await fetchBase(4500); origen = 'base'; } catch (e) { /* sin red o base pausada: queda el respaldo */ }
+  // precio final (con promo si hay), precio de lista y la promo vigente
   const precioP = new Map(), precioZ = new Map();
-  (src.precios || []).forEach(x => x.pieza_id ? precioZ.set(x.pieza_id, +x.precio || 0) : precioP.set(x.producto_id, +x.precio || 0));
+  (src.precios || []).forEach(x => {
+    const v = {precioNum: +x.precio || 0, listaNum: +(x.precio_lista ?? x.precio) || 0,
+               promo: x.promo_etiqueta ? {etiqueta: x.promo_etiqueta, tipo: x.promo_tipo, valor: +x.promo_valor || 0, hasta: x.promo_hasta || null} : null};
+    x.pieza_id ? precioZ.set(x.pieza_id, v) : precioP.set(x.producto_id, v);
+  });
+  const SIN = {precioNum: 0, listaNum: 0, promo: null};
   const cfg = Object.fromEntries((src.config || []).map(r => [r.clave, r.valor]));
   const orden = (a, b) => (+a.orden || 99) - (+b.orden || 99);
   const productos = (src.productos || [])
@@ -423,11 +448,11 @@ async function loadData(){
     .sort(orden)
     .map(p => ({
       ...p,
-      precioNum: precioP.get(p.id) || 0,
+      ...(precioP.get(p.id) || SIN),
       fotos: p.fotos || [],
       specs: p.specs || [],
       piezas: (src.piezas || []).filter(x => x.producto_id === p.id).sort(orden)
-        .map(x => ({...x, fotos: x.fotos || [], opcional: x.tipo === 'opcional', precioNum: precioZ.get(x.id) || 0}))
+        .map(x => ({...x, fotos: x.fotos || [], opcional: x.tipo === 'opcional', ...(precioZ.get(x.id) || SIN)}))
     }));
   document.documentElement.dataset.origen = origen;
   return {cfg, productos};
@@ -437,10 +462,25 @@ const big = f => /^https?:/.test(f) ? f : f.includes('.') ? `img/${f}` : `img/${
 const th  = f => /^https?:/.test(f) ? f.replace('/fotos/', '/fotos/th/') : f.includes('.') ? `img/${f}` : `img/th/${f}.webp`;
 const precioTxt = p => p.precioNum ? fmt.format(p.precioNum) : (p.nota_precio || 'Consultar precio');
 const notaTxt = p => p.precioNum ? (p.nota_precio || '') : '';
+// promos
+const conDesc = p => !!(p.promo && p.promo.tipo !== 'ninguno' && p.listaNum > p.precioNum);
+const descTxt = pr => !pr ? '' : pr.tipo === 'porcentaje' ? `${pr.valor.toLocaleString('es-AR')}% OFF` : pr.tipo === 'monto' ? `${fmt.format(pr.valor)} OFF` : '';
+const tachado = p => conDesc(p) ? `<s class="tachado">${esc(fmt.format(p.listaNum))}</s>` : '';
+function faltan(hasta){
+  const ms = new Date(hasta) - Date.now(); if (ms <= 0) return null;
+  const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60;
+  return d ? `${d} d ${h} h` : h ? `${h} h ${m} min` : `${Math.max(m, 1)} min`;
+}
+const cuentaHTML = pr => pr?.hasta && faltan(pr.hasta) ? `<span class="cd" data-hasta="${esc(pr.hasta)}"><svg class="ico"><use href="#i-clock"/></svg>Termina en <b>${faltan(pr.hasta)}</b></span>` : '';
+// cuenta regresiva en vivo; cuando una promo vence se recarga para traer el precio normal
+setInterval(() => document.querySelectorAll('[data-hasta]').forEach(el => {
+  const f = faltan(el.dataset.hasta);
+  if (f) el.querySelector('b').textContent = f; else if (!window.__recargando){ window.__recargando = true; location.reload(); }
+}), 30000);
 
 let CFG, WA, IG;
 const waLink = txt => `https://wa.me/${WA}?text=${encodeURIComponent(txt)}`;
-const waMsg = p => `Hola! Vi el catálogo de IRON PULSE y quiero consultar por el ${p.nombre}.`;
+const waMsg = p => `Hola! Vi el catálogo de IRON PULSE y quiero consultar por el ${p.nombre}.` + (p.promo ? ` Vi la promo "${p.promo.etiqueta}".` : '');
 
 /* ---------- Escenario (foto grande) ---------- */
 const stage = {a: $('#stageA'), b: $('#stageB'), cur: null, token: 0};
@@ -471,7 +511,7 @@ function pieceCap(x){
     ? {t: `${+x.cantidad > 1 ? x.cantidad + '× ' : ''}${x.pieza} · opcional`, s}
     : {t: `${x.cantidad}× ${x.pieza}`, s};
 }
-const optPrecio = x => x.precioNum ? '+ ' + fmt.format(x.precioNum) : 'Precio a confirmar';
+const optPrecio = x => (conDesc(x) ? `<s>+ ${esc(fmt.format(x.listaNum))}</s>` : '') + esc(x.precioNum ? '+ ' + fmt.format(x.precioNum) : 'Precio a confirmar') + (x.promo ? ` · ${esc(descTxt(x.promo) || x.promo.etiqueta)}` : '');
 
 function showGallery(i){
   galleryIdx = i;
@@ -485,7 +525,13 @@ function updateBuy(){
   const ops = opcionales().filter(x => sel().has(x.pieza));
   const sinPrecio = ops.some(x => !x.precioNum);
   const total = current.precioNum + ops.reduce((n, x) => n + x.precioNum, 0);
+  const totalLista = current.listaNum + ops.reduce((n, x) => n + (x.listaNum || x.precioNum), 0);
   $('#pPrice').textContent = ops.length && current.precioNum && !sinPrecio ? fmt.format(total) : precioTxt(current);
+  const hayDesc = current.precioNum && (conDesc(current) || ops.some(conDesc));
+  $('#pLista').innerHTML = hayDesc ? `<s class="tachado">${esc(fmt.format(ops.length && !sinPrecio ? totalLista : current.listaNum))}</s>` : '';
+  const pr = current.promo;
+  $('#pPromo').hidden = !pr;
+  $('#pPromo').innerHTML = pr ? `<span class="et"><svg class="ico"><use href="#i-tag"/></svg>${esc(pr.etiqueta)}</span>${descTxt(pr) ? `<span class="ds">${esc(descTxt(pr))}</span>` : ''}${cuentaHTML(pr)}` : '';
   let nota = notaTxt(current);
   const n = ops.length, pl = n > 1 ? 'es' : '';
   if (n) nota = (nota ? nota + ' · ' : '') + (sinPrecio ? `+ ${n} opcional${pl} a confirmar` : `con ${n} opcional${pl}`);
@@ -493,7 +539,7 @@ function updateBuy(){
   const msg = waMsg(current) + (n ? ` Me interesa sumar: ${ops.map(x => x.pieza.toLowerCase()).join(', ')}.` : '');
   $('#pWa').href = $('#dWa').href = waLink(msg);
   $('#dName').textContent = current.nombre + (n ? ` + ${n}` : '');
-  $('#dPrice').textContent = $('#pPrice').textContent + (n && sinPrecio ? ` · +${n} a confirmar` : '');
+  $('#dPrice').innerHTML = (hayDesc ? `<s>${esc(fmt.format(ops.length && !sinPrecio ? totalLista : current.listaNum))}</s>` : '') + esc($('#pPrice').textContent + (n && sinPrecio ? ` · +${n} a confirmar` : ''));
 }
 
 function selectRack(id, push){
@@ -524,7 +570,7 @@ function selectRack(id, push){
     <div class="piece opt${sel().has(x.pieza) ? ' on' : ''}" data-k="opt" data-i="${i}">
       <button type="button" class="ph" aria-label="Ver ${esc(x.pieza)} en grande">${x.fotos[0] ? `<img src="${th(x.fotos[0])}" alt="${esc(x.pieza)}" loading="lazy">` : ''}</button>
       ${+x.cantidad > 1 ? `<span class="qty">${esc(x.cantidad)}×</span>` : ''}
-      <span class="tx"><b>${esc(x.pieza)}</b><span>${esc(optPrecio(x))}</span></span>
+      <span class="tx"><b>${esc(x.pieza)}</b><span>${optPrecio(x)}</span></span>
       <button type="button" class="add" aria-pressed="${sel().has(x.pieza)}" aria-label="Sumar ${esc(x.pieza)} a la consulta"><span class="mas">Sumar</span><span class="ok">Sumado</span></button>
     </div>`).join('');
 
@@ -598,7 +644,7 @@ function renderCompare(){
     ['Barra de dominadas', r => estado(r, /dominadas/i)],
     ['Porta discos', r => estado(r, /porta ?discos/i)],
     ['Se puede pasar a', r => r.crece_a || '—'],
-    ['Precio', r => precioTxt(r)],
+    ['Precio', r => precioTxt(r) + (conDesc(r) ? ` (${descTxt(r.promo)})` : '')],
   ];
   $('#compare').innerHTML =
     `<thead><tr><th scope="col"><span class="sr">Característica</span></th>${racks.map(r => `<th scope="col" class="${r === current ? 'cur' : ''}">${esc(r.nombre)}</th>`).join('')}</tr></thead>
@@ -613,6 +659,7 @@ function renderOthers(otros){
       <div class="cover" data-k="${k}" data-i="0" role="button" tabindex="0" aria-label="Ver fotos del ${esc(p.nombre)}">
         ${p.fotos[0] ? `<img src="${th(p.fotos[0])}" alt="${esc(p.nombre)}" loading="lazy">` : ''}
         ${p.fotos.length > 1 ? `<span class="count"><svg class="ico"><use href="#i-zoom"/></svg>${p.fotos.length} fotos</span>` : ''}
+        ${p.promo ? `<span class="pb">${esc(descTxt(p.promo) ? descTxt(p.promo) + ' · ' + p.promo.etiqueta : p.promo.etiqueta)}</span>` : ''}
       </div>
       ${p.fotos.length > 1 ? `<div class="mini">${p.fotos.slice(1, 5).map((f, i) =>
         `<button type="button" data-k="${k}" data-i="${i + 1}" aria-label="Foto ${i + 2} del ${esc(p.nombre)}"><img src="${th(f)}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}
@@ -621,7 +668,7 @@ function renderOthers(otros){
         ${p.bajada ? `<p class="desc">${esc(p.bajada)}</p>` : ''}
         ${p.specs.length ? `<ul>${p.specs.map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : ''}
         <div class="row">
-          <div><b>${esc(precioTxt(p))}</b></div>
+          <div>${tachado(p)}<b>${esc(precioTxt(p))}</b>${p.promo?.hasta ? `<div class="promo" style="margin:6px 0 0">${cuentaHTML(p.promo)}</div>` : ''}</div>
           <a class="btn-wa ${p.precioNum ? '' : ''}" href="${waLink(waMsg(p))}" target="_blank" rel="noopener"><svg class="ico"><use href="#i-wa"/></svg>Consultar</a>
         </div>
       </div>
@@ -763,7 +810,7 @@ loadData().then(({cfg, productos}) => {
   racks = productos.filter(p => p.categoria === 'rack');
   $('#tabs').style.setProperty('--n', racks.length);
   $('#tabs').innerHTML = racks.map(r =>
-    `<button type="button" class="tab" role="tab" data-id="${esc(r.id)}" aria-controls="racks"><b>${esc(r.nombre)}</b><span>${esc(r.etiqueta || '')}</span></button>`).join('');
+    `<button type="button" class="tab" role="tab" data-id="${esc(r.id)}" aria-controls="racks">${r.promo ? `<i class="tp">${esc(descTxt(r.promo) || r.promo.etiqueta)}</i>` : ''}<b>${esc(r.nombre)}</b><span>${esc(r.etiqueta || '')}</span></button>`).join('');
   const fromHash = racks.find(r => r.id === location.hash.slice(1));
   selectRack((fromHash || racks[0]).id, false);
   renderOthers(productos.filter(p => p.categoria !== 'rack'));
