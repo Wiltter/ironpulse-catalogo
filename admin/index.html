@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel IRON PULSE</title>
+<link rel="icon" type="image/png" href="../img/favicon.png">
+<style>
+@font-face{font-family:'Barlow Condensed';font-weight:700;font-display:swap;src:url(../fonts/BarlowCondensed-700-latin.woff2) format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-weight:800;font-display:swap;src:url(../fonts/BarlowCondensed-800-latin.woff2) format('woff2')}
+@font-face{font-family:'Barlow Semi Condensed';font-weight:400;font-display:swap;src:url(../fonts/BarlowSemiCondensed-400-latin.woff2) format('woff2')}
+@font-face{font-family:'Barlow Semi Condensed';font-weight:400;font-display:swap;src:url(../fonts/BarlowSemiCondensed-400-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow Semi Condensed';font-weight:600;font-display:swap;src:url(../fonts/BarlowSemiCondensed-600-latin.woff2) format('woff2')}
+:root{
+  --ink:#0c0c0c; --ink-2:#141414; --steel:#1b1b1b; --steel-2:#242424; --line:#2e2e2e;
+  --yellow:#f6c21e; --paper:#f2f2f0; --muted:#a8a8a4; --muted-2:#7a7a74;
+  --ok:#5fd38d; --warn:#ff9f43; --bad:#ff6b6b;
+  --display:'Barlow Condensed',system-ui,sans-serif; --text:'Barlow Semi Condensed',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--paper);font:400 15px/1.45 var(--text)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--yellow)}
+:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
+.ico{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 16px}
+[hidden]{display:none!important}
+
+/* ingreso */
+.login{min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+.card{width:100%;max-width:400px;background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:26px}
+.card img{height:34px;margin-bottom:18px}
+.card h1{margin:0 0 4px;font:800 30px/1 var(--display);text-transform:uppercase}
+.card p{margin:0 0 18px;color:var(--muted)}
+label.f{display:block;margin:0 0 12px;font-size:13px;color:var(--muted)}
+label.f input{display:block;width:100%;margin-top:4px}
+input,select,textarea{background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+input:focus,select:focus,textarea:focus{border-color:var(--yellow);outline:none}
+textarea{width:100%;resize:vertical}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:999px;border:1px solid var(--line);background:var(--steel);font:700 14px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.btn:hover{border-color:var(--yellow);color:var(--yellow)}
+.btn.pri{background:var(--yellow);border-color:var(--yellow);color:var(--ink)}
+.btn.pri:hover{background:#ffd23a;color:var(--ink)}
+.btn.sm{padding:6px 11px;font-size:13px}
+.btn.del{color:var(--muted);padding:6px 8px;border-color:transparent;background:none}
+.btn.del:hover{color:var(--bad);border-color:var(--bad)}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;padding:0;font-size:14px}
+.msg{margin-top:12px;font-size:14px;color:var(--muted)}
+.msg.bad{color:var(--bad)}.msg.ok{color:var(--ok)}
+
+/* app */
+.top{position:sticky;top:0;z-index:20;background:rgba(12,12,12,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:18px;min-height:58px;flex-wrap:wrap}
+.top img{height:24px}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1}
+.tabs button{padding:8px 12px;border:0;border-radius:8px;background:none;color:var(--muted);font:700 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.tabs button:hover{color:var(--paper)}
+.tabs button[aria-selected="true"]{background:var(--steel-2);color:var(--yellow)}
+.me{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+main{padding:22px 0 80px}
+h2{margin:0 0 4px;font:800 32px/1 var(--display);text-transform:uppercase}
+h3{margin:22px 0 8px;font:700 18px/1 var(--display);letter-spacing:.08em;text-transform:uppercase}
+.sub{margin:0 0 18px;color:var(--muted);max-width:80ch}
+.panel{background:var(--ink-2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font:700 12px/1.2 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+td.num,th.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td input,td select{width:100%}
+td select{min-width:118px}
+td input.n{text-align:right;width:120px}
+td input.n.sm{width:80px}
+tr.grupo td{background:var(--steel);font:700 13px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--yellow)}
+.big{font:800 20px/1 var(--display)}
+.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.badge.warn{border-color:var(--warn);color:var(--warn)}
+.badge.ok{border-color:var(--ok);color:var(--ok)}
+.badge.y{border-color:var(--yellow);color:var(--yellow)}
+.badge.bad{border-color:var(--bad);color:var(--bad)}
+.impacto{font-size:13px;color:var(--warn);margin-top:4px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.pills button{padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--steel);font:700 14px/1 var(--display);letter-spacing:.04em;text-transform:uppercase}
+.pills button[aria-pressed="true"]{background:var(--yellow);border-color:var(--yellow);color:var(--ink)}
+.totales{display:flex;flex-wrap:wrap;gap:12px 28px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.totales div small{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.totales div b{font:800 22px/1.1 var(--display)}
+.fotos{display:flex;flex-wrap:wrap;gap:8px}
+.foto{position:relative;width:96px}
+.foto img{width:96px;height:96px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block;background:var(--steel)}
+.foto .acc{display:flex;justify-content:space-between;margin-top:3px}
+.foto .acc button{background:none;border:0;color:var(--muted);padding:2px 4px}
+.foto .acc button:hover{color:var(--yellow)}
+.foto .acc button.x:hover{color:var(--bad)}
+.add-foto{width:96px;height:96px;border-radius:8px;border:1px dashed var(--line);background:none;color:var(--muted);display:grid;place-items:center;text-align:center;font-size:12px}
+.add-foto:hover{border-color:var(--yellow);color:var(--yellow)}
+.costo-pieza td{background:#101010}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(20px);opacity:0;padding:10px 16px;border-radius:999px;background:var(--steel-2);border:1px solid var(--line);font-size:14px;transition:.25s;z-index:60;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.toast.bad{border-color:var(--bad);color:var(--bad)}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.75);display:grid;place-items:center;padding:16px}
+.modal .card{max-width:860px;max-height:86vh;overflow:auto}
+.lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:12px}
+.lib button{padding:0;border:2px solid transparent;border-radius:8px;overflow:hidden;background:var(--steel)}
+.lib button:hover{border-color:var(--yellow)}
+.lib img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.lib span{display:block;font-size:11px;color:var(--muted);padding:3px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist td{font-size:14px}
+.hist .cambio{color:var(--muted)}
+.hist .cambio b{color:var(--paper);font-weight:600}
+@media (max-width:700px){h2{font-size:26px}.me span{display:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"/><path d="M9 12h12l-3 -3"/><path d="M18 15l3 -3"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6l6 6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></symbol>
+</svg>
+
+<!-- ============ Ingreso ============ -->
+<section class="login" id="vLogin" hidden>
+  <form class="card" id="fLogin">
+    <img src="../img/logo-ironpulse.png" alt="IRON PULSE">
+    <h1 id="lTitulo">Panel</h1>
+    <p id="lSub">Costos, precios y catálogo.</p>
+    <label class="f" id="lNombreWrap" hidden>Nombre<input id="lNombre" autocomplete="name"></label>
+    <label class="f" id="lMailWrap">Mail<input id="lMail" type="email" autocomplete="email" required></label>
+    <label class="f" id="lPassWrap">Contraseña<input id="lPass" type="password" autocomplete="current-password" minlength="8" required></label>
+    <button class="btn pri" style="width:100%" id="lBtn">Entrar</button>
+    <div class="row" style="justify-content:space-between;margin-top:14px">
+      <button type="button" class="link" id="lCrear">Crear cuenta</button>
+      <button type="button" class="link" id="lOlvide">Olvidé mi contraseña</button>
+    </div>
+    <div class="msg" id="lMsg" role="status"></div>
+  </form>
+</section>
+
+<section class="login" id="vPend" hidden>
+  <div class="card">
+    <img src="../img/logo-ironpulse.png" alt="IRON PULSE">
+    <h1>Cuenta pendiente</h1>
+    <p>Tu cuenta (<b id="pMail"></b>) está creada. Falta que alguien del equipo la apruebe desde el panel. Cuando esté, recargá esta página.</p>
+    <button class="btn" id="pSalir"><svg class="ico"><use href="#i-out"/></svg>Salir</button>
+  </div>
+</section>
+
+<section class="login" id="vSinConfig" hidden>
+  <div class="card"><h1>Falta conectar la base</h1><p>Completá <code>supabase-config.js</code> con la URL y la clave del proyecto.</p></div>
+</section>
+
+<!-- ============ App ============ -->
+<div id="vApp" hidden>
+  <header class="top">
+    <div class="wrap">
+      <img src="../img/logo-ironpulse.png" alt="IRON PULSE">
+      <nav class="tabs" role="tablist" id="tabs">
+        <button role="tab" data-t="precios">Precios</button>
+        <button role="tab" data-t="materiales">Materiales</button>
+        <button role="tab" data-t="productos">Productos</button>
+        <button role="tab" data-t="pagina">Página</button>
+        <button role="tab" data-t="usuarios">Usuarios</button>
+        <button role="tab" data-t="historial">Historial</button>
+      </nav>
+      <div class="me"><a class="btn sm" href="../" target="_blank" rel="noopener"><svg class="ico"><use href="#i-ext"/></svg>Ver catálogo</a><span id="meMail"></span><button class="btn sm" id="salir" aria-label="Salir"><svg class="ico"><use href="#i-out"/></svg></button></div>
+    </div>
+  </header>
+  <main class="wrap" id="main"></main>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<input type="file" id="fileUp" accept="image/*" multiple hidden>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../supabase-config.js"></script>
+<script>
+/* =====================================================================
+   Panel IRON PULSE. Todo lo que se ve acá lo protege la base (RLS):
+   una cuenta que no está aprobada recibe tablas vacías.
+   ===================================================================== */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = new Intl.NumberFormat('es-AR', {style:'currency', currency:'ARS', maximumFractionDigits:0});
+const money = v => v == null || isNaN(v) ? '—' : fmt.format(v);
+const pct = v => v == null || !isFinite(v) ? '—' : (v * 100).toLocaleString('es-AR', {maximumFractionDigits: 1}) + '%';
+// acepta 1.477.750 · 1477750 · 0,33 · 0.33 · 14,9 (punto de miles solo si hay grupos de 3)
+const num = s => {
+  if (s === '' || s == null) return null;
+  let t = String(s).trim().replace(/[\s$]/g, '');
+  if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.');
+  else if (/^-?[1-9]\d{0,2}(\.\d{3})+$/.test(t)) t = t.replace(/\./g, '');
+  const v = +t; return isNaN(v) ? null : v;
+};
+const numIn = v => v == null || v === '' ? '' : (+v).toLocaleString('es-AR', {maximumFractionDigits: 4});
+const hace = d => { if (!d) return null; const dias = Math.floor((Date.now() - new Date(d)) / 864e5); return dias <= 0 ? 'hoy' : dias === 1 ? 'ayer' : `hace ${dias} días`; };
+
+function toast(t, bad){ const el = $('#toast'); el.textContent = t; el.className = 'toast on' + (bad ? ' bad' : ''); clearTimeout(toast.t); toast.t = setTimeout(() => el.className = 'toast', 2200); }
+
+const CFG = window.IP_SUPABASE || {};
+if (!CFG.url || !CFG.key){ $('#vSinConfig').hidden = false; throw new Error('sin config'); }
+const sb = supabase.createClient(CFG.url, CFG.key);
+
+/* ---------- fotos: nombres del repo o URL del bucket ---------- */
+const big = f => /^https?:/.test(f) ? f : `../img/${f.includes('.') ? f : f + '.webp'}`;
+const th  = f => /^https?:/.test(f) ? f.replace('/fotos/', '/fotos/th/') : `../img/${f.includes('.') ? f : 'th/' + f + '.webp'}`;
+
+/* =====================================================================
+   Ingreso
+   ===================================================================== */
+let modo = 'entrar';
+function modoLogin(m){
+  modo = m;
+  $('#lNombreWrap').hidden = m !== 'crear';
+  $('#lPassWrap').hidden = m === 'olvide';
+  $('#lPass').required = m !== 'olvide';
+  $('#lPass').autocomplete = m === 'crear' || m === 'nueva' ? 'new-password' : 'current-password';
+  $('#lMailWrap').hidden = m === 'nueva';
+  $('#lMail').required = m !== 'nueva';
+  $('#lTitulo').textContent = {entrar:'Panel', crear:'Crear cuenta', olvide:'Recuperar', nueva:'Nueva contraseña'}[m];
+  $('#lSub').textContent = {entrar:'Costos, precios y catálogo.', crear:'Queda pendiente hasta que alguien del equipo la apruebe.',
+                            olvide:'Te mandamos un mail con un link.', nueva:'Elegí una contraseña nueva (mínimo 8).'}[m];
+  $('#lBtn').textContent = {entrar:'Entrar', crear:'Crear cuenta', olvide:'Mandar link', nueva:'Guardar'}[m];
+  $('#lCrear').textContent = m === 'entrar' ? 'Crear cuenta' : 'Ya tengo cuenta';
+  $('#lMsg').textContent = '';
+}
+$('#lCrear').onclick = () => modoLogin(modo === 'entrar' ? 'crear' : 'entrar');
+$('#lOlvide').onclick = () => modoLogin('olvide');
+$('#fLogin').onsubmit = async e => {
+  e.preventDefault();
+  const mail = $('#lMail').value.trim(), pass = $('#lPass').value, msg = $('#lMsg');
+  msg.className = 'msg'; msg.textContent = '…';
+  let r;
+  if (modo === 'entrar') r = await sb.auth.signInWithPassword({email: mail, password: pass});
+  else if (modo === 'crear') r = await sb.auth.signUp({email: mail, password: pass,
+            options: {data: {nombre: $('#lNombre').value.trim()}, emailRedirectTo: location.href.split('#')[0]}});
+  else if (modo === 'olvide') r = await sb.auth.resetPasswordForEmail(mail, {redirectTo: location.href.split('#')[0]});
+  else r = await sb.auth.updateUser({password: pass});
+  if (r.error){ msg.className = 'msg bad'; msg.textContent = traducir(r.error.message); return; }
+  if (modo === 'entrar'){ msg.textContent = ''; arrancar(); }
+  else if (modo === 'crear'){ msg.className = 'msg ok'; msg.textContent = r.data.session ? 'Cuenta creada.' : 'Listo. Revisá tu mail para confirmar la cuenta.'; if (r.data.session) arrancar(); }
+  else if (modo === 'olvide'){ msg.className = 'msg ok'; msg.textContent = 'Si el mail existe, te llegó un link.'; }
+  else if (modo === 'nueva'){ modoLogin('entrar'); toast('Contraseña cambiada'); arrancar(); }
+};
+function traducir(m){
+  if (/invalid login/i.test(m)) return 'Mail o contraseña incorrectos.';
+  if (/email not confirmed/i.test(m)) return 'Falta confirmar el mail: revisá tu bandeja.';
+  if (/already registered/i.test(m)) return 'Ese mail ya tiene cuenta.';
+  if (/password/i.test(m) && /6|8|characters/i.test(m)) return 'La contraseña es muy corta.';
+  if (/rate limit/i.test(m)) return 'Demasiados intentos. Probá en unos minutos.';
+  return m;
+}
+sb.auth.onAuthStateChange((ev) => { if (ev === 'PASSWORD_RECOVERY'){ mostrar('login'); modoLogin('nueva'); } });
+$('#salir').onclick = $('#pSalir').onclick = async () => { await sb.auth.signOut(); location.reload(); };
+
+function mostrar(v){ ['vLogin','vPend','vApp'].forEach(id => $('#' + id).hidden = id !== 'v' + v[0].toUpperCase() + v.slice(1)); }
+
+/* =====================================================================
+   Datos y motor de costos (espejo de la función costo() de la base)
+   ===================================================================== */
+const D = {};
+let YO = null;
+async function cargar(){
+  const q = (t, o) => sb.from(t).select('*').order(o || 'id');
+  const r = await Promise.all([q('materiales', 'nombre'), q('receta'), q('costos_producto', 'orden'), q('precios'), q('ajustes', 'clave'),
+                               q('productos', 'orden'), q('piezas', 'orden'), q('config', 'clave'), q('admins', 'creado_en')]);
+  const err = r.find(x => x.error); if (err) throw err.error;
+  [D.materiales, D.receta, D.costos, D.precios, D.ajustes, D.productos, D.piezas, D.config, D.admins] = r.map(x => x.data);
+}
+const tarifa = () => +(D.ajustes.find(a => a.clave === 'tarifa_hora')?.valor || 0);
+const mat = id => D.materiales.find(m => m.id === id);
+const esDe = (x, ref) => ref.pieza_id ? x.pieza_id === ref.pieza_id : x.producto_id === ref.producto_id && !x.pieza_id;
+function subLinea(l, matOverride){
+  const m = matOverride?.id === l.material_id ? matOverride : mat(l.material_id); if (!m) return 0;
+  return m.tipo === 'chapa' ? (m.largo ? m.precio * l.cantidad / m.largo : 0) : m.precio * l.cantidad;
+}
+function subCosto(c, bases){
+  return {horas: c.valor * tarifa(), pct_corte_chapa: c.valor / 100 * bases.chapa, pct_corte_estructural: c.valor / 100 * bases.estructural,
+          pct_plegado: c.valor / 100 * bases.plegado, fijo: +c.valor}[c.tipo] || 0;
+}
+function costoDe(ref, matOverride){
+  const lineas = D.receta.filter(l => esDe(l, ref));
+  const b = {total: 0, chapa: 0, estructural: 0, plegado: 0};
+  for (const l of lineas){
+    const m = matOverride?.id === l.material_id ? matOverride : mat(l.material_id); const s = subLinea(l, matOverride);
+    b.total += s; if (m?.corte === 'chapa') b.chapa += s; if (m?.corte === 'estructural') b.estructural += s; if (m?.plegado) b.plegado += s;
+  }
+  const extras = D.costos.filter(c => esDe(c, ref)).reduce((n, c) => n + subCosto(c, b), 0);
+  return {costo: Math.round((b.total + extras) * 100) / 100, bases: b};
+}
+const precioDe = ref => D.precios.find(p => ref.pieza_id ? p.pieza_id === ref.pieza_id : p.producto_id === ref.producto_id);
+function sugerido(costo, p){ const g = p?.ganancia ?? .8, r = p?.redondeo || 1000; return costo > 0 ? Math.round(costo * (1 + g) / r) * r : null; }
+function fila(ref, matOverride){
+  const {costo} = costoDe(ref, matOverride), p = precioDe(ref), sug = sugerido(costo, p);
+  const pub = p?.precio_manual ?? sug;
+  return {costo, p, sug, pub, margen: costo > 0 && pub ? pub / costo - 1 : null};
+}
+
+async function guardar(tabla, id, cambios, campoId = 'id'){
+  const {error} = await sb.from(tabla).update(cambios).eq(campoId, id);
+  if (error){ toast('No se guardó: ' + error.message, true); return false; }
+  const arr = {costos_producto: D.costos}[tabla] || D[tabla];
+  const it = arr?.find(x => x[campoId] === id); if (it) Object.assign(it, cambios);
+  toast('Guardado'); return true;
+}
+async function insertar(tabla, fila_){
+  const {data, error} = await sb.from(tabla).insert(fila_).select().single();
+  if (error){ toast('No se guardó: ' + error.message, true); return null; }
+  ({costos_producto: D.costos}[tabla] || D[tabla]).push(data); toast('Agregado'); return data;
+}
+async function borrar(tabla, id){
+  const {error} = await sb.from(tabla).delete().eq('id', id);
+  if (error){ toast('No se borró: ' + error.message, true); return false; }
+  const arr = {costos_producto: D.costos}[tabla] || D[tabla]; const i = arr.findIndex(x => x.id === id); if (i >= 0) arr.splice(i, 1);
+  toast('Borrado'); return true;
+}
+// los materiales se re-leen después de guardar: la base les pone el sello de fecha
+async function releerMaterial(id){ const {data} = await sb.from('materiales').select('*').eq('id', id).single(); if (data) Object.assign(mat(id), data); }
+
+/* =====================================================================
+   Pestañas
+   ===================================================================== */
+let TAB = 'precios', PROD = null;
+$('#tabs').onclick = e => { const b = e.target.closest('button'); if (b) ir(b.dataset.t); };
+function ir(t){
+  TAB = t; history.replaceState(null, '', '#' + t);
+  const m = $('#main'); m.onclick = m.onchange = m.oninput = null;   // cada pestaña pone los suyos
+  [...$('#tabs').children].forEach(b => b.setAttribute('aria-selected', b.dataset.t === t));
+  ({precios: vPrecios, materiales: vMateriales, productos: vProductos, pagina: vPagina, usuarios: vUsuarios, historial: vHistorial})[t]();
+}
+
+/* ---------- Precios ---------- */
+function vPrecios(){
+  const prods = [...D.productos].sort((a, b) => a.orden - b.orden);
+  const opc = D.piezas.filter(z => z.tipo === 'opcional');
+  const filaHTML = (ref, nombre, extra) => {
+    const f = fila(ref); const manual = f.p?.precio_manual != null;
+    const baja = manual && f.margen != null && f.p && f.margen < f.p.ganancia - 0.005;
+    const key = ref.pieza_id ? 'z' + ref.pieza_id : 'p' + ref.producto_id;
+    return `<tr data-k="${key}">
+      <td><b>${esc(nombre)}</b>${extra ? `<br><small style="color:var(--muted)">${esc(extra)}</small>` : ''}</td>
+      <td class="num">${f.costo > 0 ? money(f.costo) : '<span class="badge">sin costos</span>'}</td>
+      <td class="num"><input class="n sm" data-f="ganancia" value="${numIn(Math.round((f.p?.ganancia ?? .8) * 1000) / 10)}" aria-label="Ganancia %"> %</td>
+      <td class="num">${money(f.sug)}</td>
+      <td class="num"><input class="n" data-f="precio_manual" value="${manual ? numIn(f.p.precio_manual) : ''}" placeholder="${f.sug ? 'calculado' : 'sin precio'}" aria-label="Precio fijo"></td>
+      <td class="num big">${money(f.pub)}</td>
+      <td class="num">${f.margen == null ? '—' : `<span class="badge ${baja ? 'warn' : 'ok'}">${pct(f.margen)}</span>`}</td>
+      <td>${manual ? `<span class="badge y">fijo a mano</span> <button class="link" data-a="calc">volver al calculado</button>` : f.sug ? '<span class="badge">calculado</span>' : '<span class="badge">consultar</span>'}</td>
+    </tr>`;
+  };
+  $('#main').innerHTML = `
+    <h2>Precios</h2>
+    <p class="sub">El precio que ve el cliente es el <b>publicado</b>: el calculado (costo × (1 + ganancia), redondeado) o, si escribís uno en "Precio fijo", ese. "Margen real" es lo que te queda de verdad sobre el costo. Naranja = el precio fijo deja menos ganancia que la configurada.</p>
+    <div class="panel scroll"><table>
+      <thead><tr><th>Producto</th><th class="num">Costo</th><th class="num">Ganancia</th><th class="num">Calculado</th><th class="num">Precio fijo</th><th class="num">Publicado</th><th class="num">Margen real</th><th></th></tr></thead>
+      <tbody>
+        <tr class="grupo"><td colspan="8">Productos</td></tr>
+        ${prods.map(p => filaHTML({producto_id: p.id}, p.nombre)).join('')}
+        <tr class="grupo"><td colspan="8">Opcionales</td></tr>
+        ${opc.map(z => filaHTML({pieza_id: z.id}, z.pieza, 'para ' + (D.productos.find(p => p.id === z.producto_id)?.nombre || ''))).join('')}
+      </tbody></table></div>
+    ${D.materiales.some(m => !m.actualizado_en) ? `<p class="sub"><span class="badge warn">ojo</span> Hay materiales con el precio viejo del Excel: los costos y márgenes de arriba están calculados con esos precios. Actualizalos en <a href="#materiales" data-ir="materiales">Materiales</a>.</p>` : ''}`;
+  $('#main').onclick = async e => {
+    const irA = e.target.closest('[data-ir]'); if (irA){ e.preventDefault(); ir(irA.dataset.ir); return; }
+    if (e.target.dataset.a !== 'calc') return;
+    const ref = refDe(e.target.closest('tr')); const p = precioDe(ref);
+    if (p && await guardar('precios', p.id, {precio_manual: null})) vPrecios();
+  };
+  $('#main').onchange = async e => {
+    const inp = e.target; if (!inp.dataset.f) return;
+    const ref = refDe(inp.closest('tr')); let p = precioDe(ref);
+    if (!p){ p = await insertar('precios', {...ref, ganancia: .8, redondeo: 1000}); if (!p) return; }
+    const v = num(inp.value);
+    if (inp.dataset.f === 'ganancia'){ if (v == null || v < 0){ toast('Ganancia inválida', true); return; } await guardar('precios', p.id, {ganancia: v / 100}); }
+    else await guardar('precios', p.id, {precio_manual: v && v > 0 ? Math.round(v) : null});
+    vPrecios();
+  };
+}
+const refDe = tr => tr.dataset.k[0] === 'z' ? {pieza_id: +tr.dataset.k.slice(1)} : {producto_id: tr.dataset.k.slice(1)};
+
+/* ---------- Materiales ---------- */
+const TIPOS_MAT = {chapa: 'Chapa', barra: 'Caño/barra', unidad: 'Unidad'};
+function usosDe(id){
+  const refs = new Map();
+  D.receta.filter(l => l.material_id === id).forEach(l => { const ref = l.pieza_id ? {pieza_id: l.pieza_id} : {producto_id: l.producto_id}; refs.set(JSON.stringify(ref), ref); });
+  return [...refs.values()];
+}
+const nombreRef = ref => ref.pieza_id ? (D.piezas.find(z => z.id === ref.pieza_id)?.pieza + ' (opcional)') : D.productos.find(p => p.id === ref.producto_id)?.nombre;
+function vMateriales(){
+  const ms = [...D.materiales].sort((a, b) => a.tipo.localeCompare(b.tipo) || a.nombre.localeCompare(b.nombre));
+  $('#main').innerHTML = `
+    <h2>Materiales</h2>
+    <p class="sub">Cambiás un precio acá y se recalcula el costo de todo lo que lo usa. Mientras escribís te muestra cómo quedan los precios calculados. <b>Chapa</b>: el costo es precio de la plancha × uso ÷ largo de la plancha. <b>Corte</b> y <b>plegado</b> marcan sobre qué materiales se aplican esos porcentajes de mano de obra.</p>
+    <div class="panel row"><label>Mano de obra metalúrgica, $ por hora <input class="n" id="tarifa" value="${numIn(tarifa())}" style="width:130px;text-align:right"></label></div>
+    <div class="panel scroll"><table>
+      <thead><tr><th>Material</th><th>Tipo</th><th class="num">Precio</th><th>Plancha (largo × ancho)</th><th>Corte</th><th>Pleg.</th><th>Proveedor</th><th>Actualizado</th><th></th></tr></thead>
+      <tbody>${ms.map(m => `<tr data-id="${m.id}">
+        <td style="min-width:240px"><input data-f="nombre" value="${esc(m.nombre)}"><div class="impacto" data-imp></div></td>
+        <td><select data-f="tipo">${Object.entries(TIPOS_MAT).map(([k, v]) => `<option value="${k}"${m.tipo === k ? ' selected' : ''}>${v}</option>`).join('')}</select></td>
+        <td class="num"><input class="n" data-f="precio" value="${numIn(m.precio)}"></td>
+        <td>${m.tipo === 'chapa' ? `<div class="row" style="flex-wrap:nowrap"><input class="n sm" data-f="largo" value="${numIn(m.largo)}" aria-label="Largo"> × <input class="n sm" data-f="ancho" value="${numIn(m.ancho)}" aria-label="Ancho"></div>` : '<span style="color:var(--muted-2)">—</span>'}</td>
+        <td><select data-f="corte"><option value="">—</option><option value="chapa"${m.corte === 'chapa' ? ' selected' : ''}>chapa</option><option value="estructural"${m.corte === 'estructural' ? ' selected' : ''}>estructural</option></select></td>
+        <td><input type="checkbox" data-f="plegado"${m.plegado ? ' checked' : ''} aria-label="Entra en plegado"></td>
+        <td><input data-f="proveedor" value="${esc(m.proveedor || '')}" style="min-width:110px"></td>
+        <td>${m.actualizado_en ? `<span class="badge ok" title="${esc(m.actualizado_por || '')}">${hace(m.actualizado_en)}</span>` : '<span class="badge warn">precio del Excel</span>'}</td>
+        <td><button class="btn del" data-a="del" aria-label="Borrar"><svg class="ico"><use href="#i-trash"/></svg></button></td>
+      </tr>`).join('')}</tbody></table>
+      <div class="row" style="margin-top:12px"><button class="btn sm" id="nuevoMat"><svg class="ico"><use href="#i-plus"/></svg>Nuevo material</button></div>
+    </div>`;
+  $('#tarifa').onchange = async e => { const v = num(e.target.value); const a = D.ajustes.find(x => x.clave === 'tarifa_hora');
+    if (v == null) return toast('Valor inválido', true); if (a) await guardar('ajustes', 'tarifa_hora', {valor: v}, 'clave'); else { const {error} = await sb.from('ajustes').insert({clave: 'tarifa_hora', valor: v}); if (!error) D.ajustes.push({clave: 'tarifa_hora', valor: v}); } };
+  $('#main').oninput = e => {
+    if (e.target.dataset.f !== 'precio') return;
+    const tr = e.target.closest('tr'), m = mat(+tr.dataset.id), v = num(e.target.value), out = $('[data-imp]', tr);
+    if (v == null || v === +m.precio){ out.textContent = ''; return; }
+    const lista = usosDe(m.id).map(ref => { const a = fila(ref), b = fila(ref, {...m, precio: v});
+      return `${nombreRef(ref)}: costo ${money(a.costo)} → ${money(b.costo)}${a.p?.precio_manual == null ? ` · precio ${money(a.sug)} → ${money(b.sug)}` : ` · margen ${pct(a.margen)} → ${pct(b.margen)}`}`; });
+    out.innerHTML = lista.length ? lista.map(esc).join('<br>') : 'No lo usa ningún producto.';
+  };
+  $('#main').onchange = async e => {
+    const inp = e.target, f = inp.dataset.f; if (!f || inp.id === 'tarifa') return;
+    const id = +inp.closest('tr').dataset.id;
+    let v = inp.type === 'checkbox' ? inp.checked : f === 'nombre' || f === 'proveedor' ? inp.value.trim() || null : f === 'tipo' || f === 'corte' ? inp.value || null : num(inp.value);
+    if (f === 'nombre' && !v) return toast('El nombre no puede quedar vacío', true);
+    if (f === 'precio' && (v == null || v < 0)) return toast('Precio inválido', true);
+    if (await guardar('materiales', id, {[f]: v})){ await releerMaterial(id); if (['precio','tipo'].includes(f)) vMateriales(); }
+  };
+  $('#main').onclick = async e => {
+    if (e.target.closest('#nuevoMat')){ const m = await insertar('materiales', {nombre: 'Material nuevo', tipo: 'unidad', precio: 0}); if (m) vMateriales(); return; }
+    const b = e.target.closest('[data-a="del"]'); if (!b) return;
+    const id = +b.closest('tr').dataset.id, usos = usosDe(id);
+    if (usos.length) return toast(`Lo usan ${usos.length} producto(s): sacalo de las recetas primero`, true);
+    if (confirm('¿Borrar este material?') && await borrar('materiales', id)) vMateriales();
+  };
+}
+
+/* ---------- Productos ---------- */
+const TIPOS_COSTO = {horas: 'Horas de mano de obra', pct_corte_chapa: '% corte de chapa', pct_corte_estructural: '% corte estructural', pct_plegado: '% plegado', fijo: 'Monto fijo ($)'};
+const PISTA_CANT = {chapa: 'uso', barra: 'barras', unidad: 'unidades'};
+function editorCosto(ref){
+  const lineas = D.receta.filter(l => esDe(l, ref)), otros = D.costos.filter(c => esDe(c, ref)).sort((a, b) => a.orden - b.orden);
+  const {costo, bases} = costoDe(ref); const f = fila(ref);
+  const opts = sel => [...D.materiales].sort((a, b) => a.nombre.localeCompare(b.nombre)).map(m => `<option value="${m.id}"${m.id === sel ? ' selected' : ''}>${esc(m.nombre)}</option>`).join('');
+  return `<div class="scroll"><table>
+      <thead><tr><th>Material</th><th class="num">Cantidad</th><th class="num">Subtotal</th><th>Nota</th><th></th></tr></thead>
+      <tbody>${lineas.map(l => `<tr data-t="receta" data-id="${l.id}">
+        <td style="min-width:260px"><select data-f="material_id">${opts(l.material_id)}</select></td>
+        <td class="num"><input class="n sm" data-f="cantidad" value="${numIn(l.cantidad)}"> <small style="color:var(--muted)">${PISTA_CANT[mat(l.material_id)?.tipo] || ''}</small></td>
+        <td class="num">${money(subLinea(l))}</td>
+        <td><input data-f="nota" value="${esc(l.nota || '')}"></td>
+        <td><button class="btn del" data-a="del" aria-label="Borrar"><svg class="ico"><use href="#i-trash"/></svg></button></td></tr>`).join('')}
+      </tbody></table></div>
+    <button class="btn sm" data-a="addMat" style="margin-top:8px"><svg class="ico"><use href="#i-plus"/></svg>Material</button>
+    <div class="scroll" style="margin-top:14px"><table>
+      <thead><tr><th>Mano de obra y otros</th><th>Tipo</th><th class="num">Valor</th><th class="num">Subtotal</th><th></th></tr></thead>
+      <tbody>${otros.map(c => `<tr data-t="costos_producto" data-id="${c.id}">
+        <td style="min-width:200px"><input data-f="concepto" value="${esc(c.concepto)}"></td>
+        <td><select data-f="tipo">${Object.entries(TIPOS_COSTO).map(([k, v]) => `<option value="${k}"${c.tipo === k ? ' selected' : ''}>${v}</option>`).join('')}</select></td>
+        <td class="num"><input class="n sm" data-f="valor" value="${numIn(c.valor)}"></td>
+        <td class="num">${money(subCosto(c, bases))}</td>
+        <td><button class="btn del" data-a="del" aria-label="Borrar"><svg class="ico"><use href="#i-trash"/></svg></button></td></tr>`).join('')}
+      </tbody></table></div>
+    <button class="btn sm" data-a="addCosto" style="margin-top:8px"><svg class="ico"><use href="#i-plus"/></svg>Costo</button>
+    <div class="totales">
+      <div><small>Costo</small><b>${money(costo)}</b></div>
+      <div><small>Ganancia</small><b>${pct(f.p?.ganancia ?? .8)}</b></div>
+      <div><small>Calculado</small><b>${money(f.sug)}</b></div>
+      <div><small>Publicado</small><b style="color:var(--yellow)">${money(f.pub)}</b></div>
+      <div><small>Margen real</small><b>${pct(f.margen)}</b></div>
+    </div>`;
+}
+function editorFotos(fotos, campo){
+  return `<div class="fotos" data-fotos="${campo}">${fotos.map((f, i) => `<div class="foto" data-i="${i}">
+      <img src="${esc(th(f))}" alt="" loading="lazy" title="${esc(f)}">
+      <div class="acc"><button data-a="izq" aria-label="Mover antes"><svg class="ico"><use href="#i-left"/></svg></button><button class="x" data-a="quitar" aria-label="Quitar"><svg class="ico"><use href="#i-x"/></svg></button><button data-a="der" aria-label="Mover después"><svg class="ico"><use href="#i-right"/></svg></button></div>
+    </div>`).join('')}<button class="add-foto" data-a="addFoto">+ foto</button></div>`;
+}
+function vProductos(){
+  const prods = [...D.productos].sort((a, b) => a.orden - b.orden);
+  if (!PROD || !D.productos.find(p => p.id === PROD)) PROD = prods[0]?.id;
+  const p = D.productos.find(x => x.id === PROD);
+  const piezas = D.piezas.filter(z => z.producto_id === PROD).sort((a, b) => a.tipo.localeCompare(b.tipo) || a.orden - b.orden);
+  $('#main').innerHTML = `
+    <h2>Productos</h2>
+    <div class="pills">${prods.map(x => `<button data-p="${esc(x.id)}" aria-pressed="${x.id === PROD}">${esc(x.nombre)}</button>`).join('')}<button data-a="nuevoProd">+ Nuevo</button></div>
+    ${!p ? '' : `
+    <div class="panel"><h3 style="margin-top:0">Costo de ${esc(p.nombre)}</h3><div data-costo>${editorCosto({producto_id: p.id})}</div></div>
+    <div class="panel" data-t="productos" data-id="${esc(p.id)}">
+      <h3 style="margin-top:0">Lo que ve el cliente</h3>
+      <div class="grid2">
+        <label class="f">Nombre<input data-f="nombre" value="${esc(p.nombre)}"></label>
+        <label class="f">Etiqueta<input data-f="etiqueta" value="${esc(p.etiqueta || '')}"></label>
+        <label class="f">Categoría<select data-f="categoria"><option value="rack"${p.categoria === 'rack' ? ' selected' : ''}>Rack (arriba, con despiece)</option><option value="otro"${p.categoria === 'otro' ? ' selected' : ''}>Otro (También fabricamos)</option></select></label>
+        <label class="f">Orden<input data-f="orden" value="${p.orden}"></label>
+        <label class="f">Nota del precio<input data-f="nota_precio" value="${esc(p.nota_precio || '')}"></label>
+        <label class="f" style="display:flex;align-items:center;gap:8px;margin-top:18px"><input type="checkbox" data-f="visible"${p.visible ? ' checked' : ''}> Visible en el catálogo</label>
+      </div>
+      ${p.categoria === 'rack' ? `<div class="grid2">
+        <label class="f">Cómo va<input data-f="fijacion" value="${esc(p.fijacion || '')}"></label>
+        <label class="f">Tipo<input data-f="tipo" value="${esc(p.tipo || '')}"></label>
+        <label class="f">Se puede pasar a<input data-f="crece_a" value="${esc(p.crece_a || '')}"></label></div>` : ''}
+      <label class="f">Bajada<textarea data-f="bajada" rows="2">${esc(p.bajada || '')}</textarea></label>
+      <label class="f">Cómo está hecho (una por línea)<textarea data-f="specs" rows="5">${esc((p.specs || []).join('\n'))}</textarea></label>
+      <div class="f" style="font-size:13px;color:var(--muted)">Fotos del producto (la primera es la principal)</div>
+      ${editorFotos(p.fotos || [], 'p:' + p.id)}
+    </div>
+    <div class="panel">
+      <h3 style="margin-top:0">Despiece y opcionales</h3>
+      <div class="scroll"><table>
+        <thead><tr><th>Orden</th><th>Tipo</th><th class="num">Cant.</th><th>Pieza</th><th>Medida</th><th>Detalle</th><th>Fotos</th><th></th></tr></thead>
+        <tbody>${piezas.map(z => `<tr data-t="piezas" data-id="${z.id}">
+          <td><input class="n sm" data-f="orden" value="${z.orden}" style="width:56px"></td>
+          <td><select data-f="tipo"><option value="incluido"${z.tipo === 'incluido' ? ' selected' : ''}>incluido</option><option value="opcional"${z.tipo === 'opcional' ? ' selected' : ''}>opcional</option></select></td>
+          <td class="num"><input class="n sm" data-f="cantidad" value="${z.cantidad}" style="width:56px"></td>
+          <td style="min-width:150px"><input data-f="pieza" value="${esc(z.pieza)}"></td>
+          <td style="min-width:110px"><input data-f="medida" value="${esc(z.medida || '')}"></td>
+          <td style="min-width:180px"><input data-f="detalle" value="${esc(z.detalle || '')}"></td>
+          <td>${editorFotos(z.fotos || [], 'z:' + z.id)}</td>
+          <td style="white-space:nowrap">${z.tipo === 'opcional' ? `<button class="btn sm" data-a="costoPieza">Costo</button> ` : ''}<button class="btn del" data-a="del" aria-label="Borrar"><svg class="ico"><use href="#i-trash"/></svg></button></td>
+        </tr>${z.tipo === 'opcional' && ABIERTA === z.id ? `<tr class="costo-pieza"><td colspan="8"><b>Costo de ${esc(z.pieza)} (opcional)</b><div data-costo-pieza="${z.id}">${editorCosto({pieza_id: z.id})}</div></td></tr>` : ''}`).join('')}
+        </tbody></table></div>
+      <button class="btn sm" data-a="addPieza" style="margin-top:8px"><svg class="ico"><use href="#i-plus"/></svg>Pieza</button>
+    </div>`}`;
+}
+let ABIERTA = null;   // opcional con el editor de costo abierto
+function refCosto(el){ const cp = el.closest('[data-costo-pieza]'); return cp ? {pieza_id: +cp.dataset.costoPieza} : {producto_id: PROD}; }
+async function onProductosChange(e){
+  const inp = e.target, f = inp.dataset.f; if (!f || TAB !== 'productos') return;
+  const cont = inp.closest('[data-t]'); const t = cont.dataset.t, id = t === 'productos' ? cont.dataset.id : +cont.dataset.id;
+  let v;
+  if (inp.type === 'checkbox') v = inp.checked;
+  else if (f === 'specs') v = inp.value.split('\n').map(s => s.trim()).filter(Boolean);
+  else if (f === 'valor' || (t === 'receta' && f === 'cantidad')) v = num(inp.value) ?? 0;
+  else if (['orden','cantidad'].includes(f)) v = parseInt(inp.value, 10) || 0;
+  else if (f === 'material_id') v = +inp.value;
+  else v = inp.value.trim() || null;
+  if (['nombre','pieza','concepto'].includes(f) && !v) return toast('No puede quedar vacío', true);
+  if (await guardar(t, id, {[f]: v})) vProductos();
+}
+async function onProductosClick(e){
+  if (TAB !== 'productos') return;
+  const pill = e.target.closest('[data-p]'); if (pill){ PROD = pill.dataset.p; ABIERTA = null; vProductos(); return; }
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const a = b.dataset.a;
+  if (a === 'nuevoProd'){
+    const nombre = prompt('Nombre del producto nuevo'); if (!nombre) return;
+    const id = nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    if (D.productos.find(p => p.id === id)) return toast('Ya existe uno con ese nombre', true);
+    if (await insertar('productos', {id, nombre, categoria: 'otro', orden: 99, visible: false})){ await insertar('precios', {producto_id: id, ganancia: .8, redondeo: 1000}); PROD = id; vProductos(); toast('Creado oculto: completalo y tildá "Visible"'); }
+    return;
+  }
+  if (a === 'addMat'){ const ref = refCosto(b); if (!D.materiales.length) return toast('Cargá un material primero', true);
+    if (await insertar('receta', {...ref, material_id: D.materiales[0].id, cantidad: 1})) vProductos(); return; }
+  if (a === 'addCosto'){ const ref = refCosto(b); if (await insertar('costos_producto', {...ref, concepto: 'Nuevo costo', tipo: 'fijo', valor: 0, orden: 99})) vProductos(); return; }
+  if (a === 'addPieza'){ if (await insertar('piezas', {producto_id: PROD, tipo: 'incluido', cantidad: 1, pieza: 'Pieza nueva', orden: 99})) vProductos(); return; }
+  if (a === 'costoPieza'){ const id = +b.closest('tr').dataset.id; ABIERTA = ABIERTA === id ? null : id;
+    if (ABIERTA && !precioDe({pieza_id: id})) await insertar('precios', {pieza_id: id, ganancia: .8, redondeo: 1000}); vProductos(); return; }
+  if (a === 'del'){ const tr = b.closest('[data-t]'); const t = tr.dataset.t;
+    if (!confirm('¿Borrar?')) return; if (await borrar(t, +tr.dataset.id)) vProductos(); return; }
+  if (['izq','der','quitar','addFoto'].includes(a)){
+    const box = b.closest('[data-fotos]'); const [tipo, rid] = box.dataset.fotos.split(':');
+    const tabla = tipo === 'p' ? 'productos' : 'piezas', id = tipo === 'p' ? rid : +rid;
+    const obj = (tipo === 'p' ? D.productos : D.piezas).find(x => x.id === id); const fotos = [...(obj.fotos || [])];
+    if (a === 'addFoto'){ elegirFoto(async f => { fotos.push(f); if (await guardar(tabla, id, {fotos})) vProductos(); }); return; }
+    const i = +b.closest('.foto').dataset.i;
+    if (a === 'quitar') fotos.splice(i, 1);
+    if (a === 'izq' && i > 0) [fotos[i - 1], fotos[i]] = [fotos[i], fotos[i - 1]];
+    if (a === 'der' && i < fotos.length - 1) [fotos[i + 1], fotos[i]] = [fotos[i], fotos[i + 1]];
+    if (await guardar(tabla, id, {fotos})) vProductos();
+  }
+}
+
+/* ---------- biblioteca de fotos + subida ---------- */
+let LIBRERIA = null;
+async function libreria(){
+  if (!LIBRERIA){ try { LIBRERIA = await (await fetch('../img/lista.json', {cache: 'no-store'})).json(); } catch { LIBRERIA = []; } }
+  const {data} = await sb.storage.from('fotos').list('', {limit: 500, sortBy: {column: 'created_at', order: 'desc'}});
+  const subidas = (data || []).filter(o => o.name.endsWith('.webp')).map(o => sb.storage.from('fotos').getPublicUrl(o.name).data.publicUrl);
+  return [...subidas, ...LIBRERIA];
+}
+function elegirFoto(cb){
+  const m = document.createElement('div'); m.className = 'modal';
+  m.innerHTML = `<div class="card"><div class="row" style="justify-content:space-between"><h1 style="font-size:24px;margin:0">Elegí una foto</h1><button class="btn sm" data-x>Cerrar</button></div>
+    <p style="margin:8px 0 0">Solo fotos reales o renders de la pieza. Se achican solas antes de subir.</p>
+    <div class="row" style="margin-top:12px"><button class="btn pri sm" data-up>Subir desde la compu o el celu</button><span class="msg" data-st style="margin:0"></span></div>
+    <div class="lib" data-lib>Cargando…</div></div>`;
+  document.body.append(m);
+  const cerrar = () => m.remove();
+  m.onclick = e => {
+    if (e.target === m || e.target.closest('[data-x]')) cerrar();
+    const f = e.target.closest('[data-f]'); if (f){ cerrar(); cb(f.dataset.f); }
+    if (e.target.closest('[data-up]')){ const fi = $('#fileUp'); fi.value = ''; fi.onchange = async () => {
+      for (const file of fi.files){ $('[data-st]', m).textContent = 'Subiendo ' + file.name + '…'; const url = await subirFoto(file); if (url){ cerrar(); cb(url); return; } }
+      $('[data-st]', m).textContent = ''; }; fi.click(); }
+  };
+  libreria().then(fs => { $('[data-lib]', m).innerHTML = fs.map(f => `<button data-f="${esc(f)}"><img src="${esc(th(f))}" alt="" loading="lazy"><span>${esc(/^https?:/.test(f) ? 'subida · ' + f.split('/').pop() : f)}</span></button>`).join(''); });
+}
+async function achicar(file, lado, calidad){
+  const bmp = await createImageBitmap(file, {imageOrientation: 'from-image'});
+  const k = Math.min(1, lado / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  return new Promise(r => c.toBlob(r, 'image/webp', calidad));
+}
+async function subirFoto(file){
+  try {
+    const base = file.name.replace(/\.[^.]+$/, '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').slice(0, 40) + '-' + Date.now().toString(36) + '.webp';
+    const [grande, chica] = await Promise.all([achicar(file, 1600, .82), achicar(file, 640, .78)]);
+    let r = await sb.storage.from('fotos').upload(base, grande, {contentType: 'image/webp'}); if (r.error) throw r.error;
+    r = await sb.storage.from('fotos').upload('th/' + base, chica, {contentType: 'image/webp'}); if (r.error) throw r.error;
+    toast('Foto subida'); return sb.storage.from('fotos').getPublicUrl(base).data.publicUrl;
+  } catch (e){ toast('No se subió: ' + (e.message || e), true); return null; }
+}
+
+/* ---------- Página (config) ---------- */
+function vPagina(){
+  const c = k => D.config.find(x => x.clave === k)?.valor || '';
+  const campos = [['whatsapp', 'WhatsApp (con 54, sin + ni espacios)'], ['instagram', 'Usuario de Instagram'], ['titulo', 'Título'], ['subtitulo', 'Subtítulo']];
+  $('#main').innerHTML = `<h2>Página</h2><p class="sub">Datos generales del catálogo.</p>
+    <div class="panel grid2">${campos.map(([k, l]) => `<label class="f">${l}<input data-k="${k}" value="${esc(c(k))}"></label>`).join('')}</div>`;
+  $('#main').onchange = async e => { const k = e.target.dataset.k; if (!k) return; const v = e.target.value.trim();
+    if (k === 'whatsapp' && !/^\d{10,15}$/.test(v)) return toast('El WhatsApp tiene que ser solo números, con 54 adelante', true);
+    if (D.config.find(x => x.clave === k)) await guardar('config', k, {valor: v}, 'clave');
+    else { const {error} = await sb.from('config').insert({clave: k, valor: v}); if (!error){ D.config.push({clave: k, valor: v}); toast('Guardado'); } } };
+}
+
+/* ---------- Usuarios ---------- */
+function vUsuarios(){
+  $('#main').innerHTML = `<h2>Usuarios</h2><p class="sub">Para sumar a alguien: que entre a esta página, toque "Crear cuenta" y confirme el mail. Después aparece acá como <b>pendiente</b> y lo activás. Inactivo = no puede entrar a los costos.</p>
+    <div class="panel scroll"><table><thead><tr><th>Mail</th><th>Nombre</th><th>Estado</th><th>Desde</th></tr></thead>
+    <tbody>${D.admins.map(a => `<tr data-id="${a.user_id}"><td>${esc(a.email)}</td><td>${esc(a.nombre || '')}</td>
+      <td><select data-f="estado"${a.user_id === YO.user_id ? ' disabled title="No podés cambiar tu propia cuenta"' : ''}>${['pendiente','activo','inactivo'].map(s => `<option${a.estado === s ? ' selected' : ''}>${s}</option>`).join('')}</select></td>
+      <td>${new Date(a.creado_en).toLocaleDateString('es-AR')}</td></tr>`).join('')}</tbody></table></div>`;
+  $('#main').onchange = async e => { if (e.target.dataset.f !== 'estado') return; await guardar('admins', e.target.closest('tr').dataset.id, {estado: e.target.value}, 'user_id'); };
+}
+
+/* ---------- Historial ---------- */
+async function vHistorial(){
+  $('#main').innerHTML = '<h2>Historial</h2><p class="sub">Últimos 150 cambios.</p><div class="panel">Cargando…</div>';
+  const {data, error} = await sb.from('historial').select('*').order('cuando', {ascending: false}).limit(150);
+  if (error) return toast(error.message, true);
+  const NOMBRES = {productos: 'Producto', piezas: 'Pieza', config: 'Página', materiales: 'Material', receta: 'Receta', costos_producto: 'Costo', precios: 'Precio', ajustes: 'Ajuste', admins: 'Usuario'};
+  const resumen = h => {
+    const o = h.despues || h.antes || {}; const quien = o.nombre || o.pieza || o.concepto || o.clave || o.email || o.producto_id || '';
+    if (h.accion !== 'UPDATE') return `${h.accion === 'INSERT' ? 'Alta' : 'Baja'} <b>${esc(quien)}</b>`;
+    const cambios = Object.keys(h.despues).filter(k => JSON.stringify(h.antes[k]) !== JSON.stringify(h.despues[k]) && !['actualizado_en','actualizado_por'].includes(k));
+    return `<b>${esc(quien)}</b>: ` + cambios.map(k => `${esc(k)} <b>${esc(JSON.stringify(h.antes[k]))}</b> → <b>${esc(JSON.stringify(h.despues[k]))}</b>`).join(' · ');
+  };
+  $('#main').innerHTML = `<h2>Historial</h2><p class="sub">Últimos 150 cambios.</p>
+    <div class="panel scroll hist"><table><thead><tr><th>Cuándo</th><th>Quién</th><th>Qué</th><th>Cambio</th></tr></thead>
+    <tbody>${data.map(h => `<tr><td style="white-space:nowrap">${new Date(h.cuando).toLocaleString('es-AR', {dateStyle: 'short', timeStyle: 'short'})}</td><td>${esc(h.quien)}</td><td>${NOMBRES[h.tabla] || esc(h.tabla)}</td><td class="cambio">${resumen(h)}</td></tr>`).join('') || '<tr><td colspan="4">Sin cambios todavía.</td></tr>'}</tbody></table></div>`;
+}
+
+/* =====================================================================
+   Arranque
+   ===================================================================== */
+document.addEventListener('change', e => { if (TAB === 'productos') onProductosChange(e); });
+document.addEventListener('click', e => { if (TAB === 'productos') onProductosClick(e); });
+async function arrancar(){
+  const {data: {session}} = await sb.auth.getSession();
+  if (!session){ mostrar('login'); modoLogin('entrar'); return; }
+  const {data: yo} = await sb.from('admins').select('*').eq('user_id', session.user.id).maybeSingle();
+  if (!yo || yo.estado !== 'activo'){ $('#pMail').textContent = session.user.email; mostrar('pend'); return; }
+  YO = yo; $('#meMail').textContent = session.user.email;
+  try { await cargar(); } catch (e){ toast('Error al cargar: ' + e.message, true); return; }
+  mostrar('app');
+  const t = location.hash.slice(1); ir(['precios','materiales','productos','pagina','usuarios','historial'].includes(t) ? t : 'precios');
+}
+if (!/type=recovery/.test(location.hash)) arrancar();
+</script>
+</body>
+</html>

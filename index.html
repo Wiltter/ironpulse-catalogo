@@ -378,13 +378,15 @@ footer .legal{flex-basis:100%;color:var(--muted-2);font-size:13px}
   <div class="cap"><b id="lbTitle"></b><span id="lbSub"></span></div>
 </div>
 
+<script src="supabase-config.js"></script>
 <script src="datos.js"></script>
 <script>
 /* =====================================================================
-   Los datos salen de la Google Sheet "IRON PULSE — Catálogo web".
-   Si la planilla no responde, se usa el respaldo de datos.js.
+   Los datos salen de la base del panel (Supabase): productos, piezas, config
+   y precios_publicos(), que devuelve SOLO el precio publicado. Costos y
+   márgenes viven en tablas que el público no puede leer.
+   Si la base no responde, se usa el respaldo de datos.js.
    ===================================================================== */
-const SHEET_ID = '1D0yxLu815UQUJ30Yw8DtjAwiCArUMCQjrFJqIfudBlw';
 const WA_DEFAULT = '542994594929';
 const IG_DEFAULT = 'ironpulse_equipamientos';
 
@@ -393,66 +395,46 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
 const fmt = new Intl.NumberFormat('es-AR', {style:'currency', currency:'ARS', maximumFractionDigits:0});
 
-function parseCSV(text){
-  const rows = []; let row = [], cell = '', q = false;
-  for (let i = 0; i < text.length; i++){
-    const c = text[i];
-    if (q){
-      if (c === '"'){ if (text[i+1] === '"'){ cell += '"'; i++; } else q = false; }
-      else cell += c;
-    } else if (c === '"') q = true;
-    else if (c === ','){ row.push(cell); cell = ''; }
-    else if (c === '\n' || c === '\r'){
-      if (c === '\r' && text[i+1] === '\n') i++;
-      row.push(cell); rows.push(row); row = []; cell = '';
-    } else cell += c;
-  }
-  if (cell !== '' || row.length){ row.push(cell); rows.push(row); }
-  const head = (rows.shift() || []).map(h => h.trim().toLowerCase());
-  return rows.filter(r => r.some(v => v.trim() !== ''))
-             .map(r => Object.fromEntries(head.map((h, i) => [h, (r[i] ?? '').trim()])));
-}
-
-async function fetchSheet(tab, ms){
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent(tab)}`;
+async function fetchBase(ms){
+  const C = window.IP_SUPABASE || {};
+  if (!C.url || !C.key) throw new Error('sin config');
+  const h = {apikey: C.key, authorization: 'Bearer ' + C.key};
   const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), ms);
+  const get = (path, opt = {}) => fetch(`${C.url}/rest/v1/${path}`, {signal: ctl.signal, cache: 'no-store', ...opt, headers: {...h, ...(opt.headers || {})}})
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
   try {
-    const r = await fetch(url, {signal: ctl.signal, cache: 'no-store'});
-    if (!r.ok) throw new Error(r.status);
-    const txt = await r.text();
-    if (/^\s*</.test(txt)) throw new Error('html');   // página de login, no CSV
-    return txt;
+    const [productos, piezas, config, precios] = await Promise.all([
+      get('productos?select=*'), get('piezas?select=*'), get('config?select=*'),
+      get('rpc/precios_publicos', {method: 'POST', headers: {'content-type': 'application/json'}, body: '{}'})]);
+    if (!productos.length) throw new Error('vacía');
+    return {productos, piezas, config, precios};
   } finally { clearTimeout(t); }
 }
 
 async function loadData(){
-  const R = window.CATALOGO_RESPALDO;
-  let src = R, origen = 'respaldo';
-  try {
-    const [productos, piezas, config] = await Promise.all(['Productos','Piezas','Config'].map(t => fetchSheet(t, 4500)));
-    const p = parseCSV(productos);
-    if (p.length && 'id' in p[0] && 'nombre' in p[0]){ src = {productos, piezas, config}; origen = 'sheet'; }
-  } catch (e) { /* sin red o planilla privada: queda el respaldo */ }
-  const cfg = Object.fromEntries(parseCSV(src.config).map(r => [r.clave, r.valor]));
-  const piezas = parseCSV(src.piezas);
-  const productos = parseCSV(src.productos)
-    .filter(p => p.id && !/^no$/i.test(p.visible || ''))
-    .sort((a, b) => (+a.orden || 99) - (+b.orden || 99))
+  let src = window.CATALOGO_RESPALDO, origen = 'respaldo';
+  try { src = await fetchBase(4500); origen = 'base'; } catch (e) { /* sin red o base pausada: queda el respaldo */ }
+  const precioP = new Map(), precioZ = new Map();
+  (src.precios || []).forEach(x => x.pieza_id ? precioZ.set(x.pieza_id, +x.precio || 0) : precioP.set(x.producto_id, +x.precio || 0));
+  const cfg = Object.fromEntries((src.config || []).map(r => [r.clave, r.valor]));
+  const orden = (a, b) => (+a.orden || 99) - (+b.orden || 99);
+  const productos = (src.productos || [])
+    .filter(p => p.id && p.visible !== false)
+    .sort(orden)
     .map(p => ({
       ...p,
-      precioNum: +(String(p.precio).replace(/[^\d]/g, '')) || 0,
-      fotos: list(p.fotos),
-      specs: (p.specs || '').split(/\||\n/).map(s => s.trim()).filter(Boolean),
-      piezas: piezas.filter(x => x.producto_id === p.id)
-                    .sort((a, b) => (+a.orden || 99) - (+b.orden || 99))
-                    .map(x => ({...x, fotos: list(x.foto), opcional: /^opc/i.test(x.tipo || ''), precioNum: +(String(x.precio || '').replace(/[^\d]/g, '')) || 0}))
+      precioNum: precioP.get(p.id) || 0,
+      fotos: p.fotos || [],
+      specs: p.specs || [],
+      piezas: (src.piezas || []).filter(x => x.producto_id === p.id).sort(orden)
+        .map(x => ({...x, fotos: x.fotos || [], opcional: x.tipo === 'opcional', precioNum: precioZ.get(x.id) || 0}))
     }));
   document.documentElement.dataset.origen = origen;
   return {cfg, productos};
 }
-const list = s => String(s || '').split(/[,;\n]/).map(x => x.trim()).filter(Boolean);
-const big = f => f.includes('.') ? `img/${f}` : `img/${f}.webp`;
-const th = f => f.includes('.') ? `img/${f}` : `img/th/${f}.webp`;
+// fotos: nombre de archivo en img/ o URL completa del bucket de Supabase
+const big = f => /^https?:/.test(f) ? f : f.includes('.') ? `img/${f}` : `img/${f}.webp`;
+const th  = f => /^https?:/.test(f) ? f.replace('/fotos/', '/fotos/th/') : f.includes('.') ? `img/${f}` : `img/th/${f}.webp`;
 const precioTxt = p => p.precioNum ? fmt.format(p.precioNum) : (p.nota_precio || 'Consultar precio');
 const notaTxt = p => p.precioNum ? (p.nota_precio || '') : '';
 

@@ -1,44 +1,64 @@
 # Catálogo web IRON PULSE
 
-Página: https://wiltterl.github.io/ironpulse-catalogo/
+- Catálogo: https://wiltter.github.io/ironpulse-catalogo/
+- Panel: https://wiltter.github.io/ironpulse-catalogo/admin/
 
-Racks 1.0 / 2.0 / 3.0 con cada pieza en foto real, comparador y bancos. Un solo `index.html`, sin
-build. Se publica con GitHub Pages desde la rama `main`.
+Racks 1.0 / 2.0 / 3.0 con despiece, opcionales para sumar a la consulta, comparador y bancos.
+Páginas estáticas sin build (GitHub Pages, rama `main`) + base de datos en Supabase (proyecto
+`ironpulse`).
 
-## Cómo cambiar precios, textos y piezas
+## El panel
 
-Todo se edita en la Google Sheet **"IRON PULSE — Catálogo web"**:
-https://docs.google.com/spreadsheets/d/1D0yxLu815UQUJ30Yw8DtjAwiCArUMCQjrFJqIfudBlw/edit
+Todo se cambia desde el panel: precios, costos, textos, piezas y fotos. Cada cambio queda en
+**Historial** con quién y cuándo.
 
-Cambiás una celda, recargás la página y ya está. No hace falta tocar código ni subir nada.
-
-> **Una sola vez:** la Sheet tiene que estar compartida como *"Cualquier persona con el enlace →
-> Lector"* (botón Compartir). Si no, la página no la puede leer y muestra el respaldo.
-
-| Pestaña | Qué tiene |
+| Pestaña | Para qué |
 | --- | --- |
-| **Productos** | Una fila por producto. `precio` sin puntos (ej. `1477750`); vacío = "Consultar precio". `visible` en `NO` lo oculta. `specs` separadas con `\|`. `fotos` separadas con coma. `categoria`: `rack` va arriba con despiece; `otro` va en "También fabricamos". `orden` define el orden |
-| **Piezas** | Una fila por pieza de cada rack (`producto_id` = el `id` del rack). `tipo`: `incluido` (viene con el rack) u `opcional` (sale en "Para sumar" y el cliente lo marca para la consulta). `precio` solo para opcionales; vacío = "Precio a confirmar". Las incluidas con `foto` salen como tarjeta; todas las incluidas salen en "Despiece completo". Para el despiece se usan los renders (`render_…`) primero y después las fotos reales |
-| **Config** | Número de WhatsApp (con 54, sin +), usuario de Instagram, título y subtítulo |
+| **Precios** | Costo, ganancia, precio calculado, precio fijo y margen real de cada producto y opcional. El cliente ve el **publicado**: el fijo si hay, si no el calculado |
+| **Materiales** | Precio de cada chapa, caño y bulón. Al cambiar uno, muestra cómo quedan los productos antes de guardar. Naranja = precio todavía heredado del Excel |
+| **Productos** | Receta de cada máquina (materiales, mano de obra, pintura…), lo que ve el cliente, despiece, opcionales (con su propio costo) y fotos |
+| **Página** | WhatsApp, Instagram, título y subtítulo |
+| **Usuarios** | Activar a quien se registró. Nadie ve costos hasta estar activo |
+| **Historial** | Los últimos cambios |
 
-**Nunca** cargar costos ni rentabilidad: la Sheet la puede leer cualquiera que tenga el link.
+**Sumar a un socio:** que entre al panel, toque "Crear cuenta" y confirme el mail. Aparece en
+Usuarios como pendiente y lo activás.
 
-## Cómo sumar una foto
+### Cómo calcula (igual que el Excel de costos)
 
-1. La foto va a `img/` (grande, ~1600 px) y a `img/th/` (miniatura, ~640 px), con el mismo nombre,
-   en `.webp`. Ej.: `img/pieza_barra-dominadas.webp` + `img/th/pieza_barra-dominadas.webp`.
-2. En la Sheet se escribe el nombre sin extensión: `pieza_barra-dominadas`.
-3. Subir los archivos al repo (desde github.com → *Add file → Upload files*, o pedírselo a Claude).
+- Chapa: precio de la plancha × uso ÷ largo de la plancha.
+- Caño / barra: precio de la barra × cantidad de barras. Por unidad: precio × cantidad.
+- Mano de obra: horas × tarifa por hora (pestaña Materiales).
+- Corte de chapa, corte estructural y plegado: % sobre los materiales marcados en esas columnas.
+- Pintura, tapizado, CNC: monto fijo por producto.
+- Precio calculado = costo × (1 + ganancia), redondeado a $1.000.
 
-Solo fotos reales. Nada de renders ni imágenes generadas.
+## Seguridad
+
+Los costos, márgenes y proveedores están en tablas que **solo pueden leer usuarios activos**: lo
+garantiza la base (RLS), no la página. El catálogo público lee productos, piezas, config y la función
+`precios_publicos()`, que devuelve únicamente el precio publicado. Esquema en
+`supabase/migraciones/`. **Ningún costo se guarda en este repo**: es público.
+
+## Fotos
+
+- Desde el panel: "+ foto" → subir. Se achican solas (1600 y 640 px, WebP) y van a Supabase Storage.
+- Las del repo están en `img/` (grande) e `img/th/` (miniatura), y listadas en `img/lista.json`.
+
+Solo fotos reales o renders de las piezas. Nada generado.
 
 ## El respaldo (`datos.js`)
 
-Si la Sheet no responde, la página muestra `datos.js`. Para que el respaldo no quede viejo, después
-de cambios grandes:
+Si la base no responde (sin internet, proyecto pausado), la página muestra `datos.js`. Después de
+cambios grandes:
 
 ```
 python actualizar_respaldo.py
 ```
 
-y subir `datos.js` y `datos/`.
+y subir `datos.js`. Lee solo lo público.
+
+## Historia
+
+Hasta el 14/10/2026 los datos salían de la Google Sheet "IRON PULSE — Catálogo web". Quedó
+congelada, no se borró. Ya no se usa: todo se edita en el panel.
