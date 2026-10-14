@@ -15,6 +15,7 @@ Todo se cambia desde el panel: precios, costos, textos, piezas y fotos. Cada cam
 | Pestaña | Para qué |
 | --- | --- |
 | **Precios** | Costo, ganancia, precio calculado, precio fijo y margen real de cada producto y opcional. El cliente ve el **publicado**: el fijo si hay, si no el calculado |
+| **Promos** | Etiquetas de tiempo limitado y descuentos (% o $, o solo etiqueta), con fecha de inicio y fin, cuenta regresiva opcional, para productos y opcionales elegidos o todo el catálogo. Muestra el margen que queda antes de guardar. Se prenden y apagan solas; pausar no borra |
 | **Materiales** | Precio de cada chapa, caño y bulón. Al cambiar uno, muestra cómo quedan los productos antes de guardar. Naranja = precio todavía heredado del Excel |
 | **Productos** | Receta de cada máquina (materiales, mano de obra, pintura…), lo que ve el cliente, despiece, opcionales (con su propio costo) y fotos |
 | **Página** | WhatsApp, Instagram, título y subtítulo |
@@ -56,7 +57,7 @@ cambios grandes:
 python actualizar_respaldo.py
 ```
 
-y subir `datos.js`. Lee solo lo público.
+y subir `datos.js`. Lee solo lo público y **va sin promos**: si la base se cae, se ven precios de lista.
 
 ## Historia
 
