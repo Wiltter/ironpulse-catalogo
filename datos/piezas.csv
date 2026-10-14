@@ -1,0 +1,33 @@
+producto_id,orden,cantidad,pieza,medida,detalle,foto
+rack3,1,4,Parante vertical,2150 mm,Perforado en las 4 caras,pieza_parante
+rack3,2,2,Soporte de barra (J),,"Chapa de 4,75 mm con traba pasante","pieza_soporte-barra_1,pieza_soporte-barra_2"
+rack3,3,2,Soporte de seguridad,400 mm,Con guarda de acero inoxidable,"pieza_soporte-seguridad_1,pieza_soporte-seguridad_2,pieza_soporte-seguridad_3"
+rack3,4,6,Porta discos,400 mm,Caño de 45 mm con tapa con logo,"pieza_porta-discos_1,pieza_porta-discos_2"
+rack3,5,8,Escuadra de ángulo,180 × 180 mm,"Chapa de 4,75 mm",pieza_escuadra-base
+rack3,6,1,Chapa con logo,1210 × 40 mm,Plegada a 90°,pieza_chapa-logo
+rack3,7,8,Tapa con logo láser,50 × 50 mm,Cierra cada caño,pieza_tapa-logo
+rack3,8,2,Base lateral,1300 mm,Perforada en 2 caras,
+rack3,9,2,Travesaño de fondo,1100 mm,Perforado en 2 caras,
+rack3,10,2,Lateral superior,500 mm,Perforado en las 4 caras,
+rack3,11,1,Barra de dominadas,1110 mm,Caño de 27 mm (3/4″),
+rack3,12,10,Planchuela de unión,120 × 50 mm,8 ciegas y 2 con agujero para la barra,
+rack3,13,50,Bulones,1/2″ × 6 cm,Con arandelas,
+rack2,1,2,Parante vertical,2150 mm,Perforado en las 4 caras,pieza_parante
+rack2,2,2,Soporte de barra (J),,"Chapa de 4,75 mm con traba pasante","pieza_soporte-barra_1,pieza_soporte-barra_2"
+rack2,3,2,Soporte de seguridad,400 mm,Con guarda de acero inoxidable,"pieza_soporte-seguridad_1,pieza_soporte-seguridad_2,pieza_soporte-seguridad_3"
+rack2,4,4,Escuadra de ángulo,180 × 180 mm,"Chapa de 4,75 mm",pieza_escuadra-base
+rack2,5,6,Tapa con logo láser,50 × 50 mm,Cierra cada caño,pieza_tapa-logo
+rack2,6,2,Base lateral,1300 mm,Perforada en 2 caras,
+rack2,7,1,Travesaño de fondo,1100 mm,Perforado en 2 caras,
+rack2,8,1,Barra de dominadas,1110 mm,Caño de 27 mm (3/4″),
+rack2,9,4,Planchuela de unión,120 × 50 mm,2 ciegas y 2 con agujero para la barra,
+rack2,10,16,Bulones,1/2″ × 6 cm,Con arandelas,
+rack1,1,2,Parante vertical,2200 mm,Perforado en las 4 caras,pieza_parante
+rack1,2,2,Soporte de barra (J),,"Chapa de 4,75 mm con traba pasante","pieza_soporte-barra_1,pieza_soporte-barra_2"
+rack1,3,2,Soporte de seguridad,400 mm,Con guarda de acero inoxidable,"pieza_soporte-seguridad_1,pieza_soporte-seguridad_2,pieza_soporte-seguridad_3"
+rack1,4,2,Tapa con logo láser,50 × 50 mm,Cierra cada caño,pieza_tapa-logo
+rack1,5,2,Lateral superior,500 mm,Va a la pared,
+rack1,6,1,Barra de dominadas,1110 mm,Caño de 27 mm (3/4″),
+rack1,7,6,Planchuela de unión,120 × 50 mm,4 ciegas y 2 con agujero para la barra,
+rack1,8,4,Anclaje en L al piso,70 × 50 mm,"Chapa de 4,75 mm",
+rack1,9,8,Bulones,1/2″ × 6 cm,Con arandelas,
