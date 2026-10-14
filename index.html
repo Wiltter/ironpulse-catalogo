@@ -9,7 +9,8 @@
 <meta property="og:title" content="Catálogo IRON PULSE · Racks 1.0, 2.0 y 3.0">
 <meta property="og:description" content="Fabricación propia en la Patagonia. Mirá cada pieza de cerca.">
 <meta property="og:image" content="img/rack3_1.webp">
-<link rel="icon" type="image/png" href="img/logo.png">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/favicon.png">
 <link rel="preload" href="fonts/BarlowCondensed-800-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face{font-family:'Barlow Condensed';font-weight:600;font-display:swap;src:url(fonts/BarlowCondensed-600-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
@@ -44,7 +45,7 @@ a{color:inherit}
 /* ---------- Encabezado ---------- */
 .top{position:sticky;top:0;z-index:30;background:rgba(12,12,12,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .top .wrap{display:flex;align-items:center;gap:20px;height:64px}
-.brand img{height:34px;width:auto}
+.brand img{height:30px;width:auto}
 .top nav{display:flex;gap:22px;margin-left:auto;font:600 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase}
 .top nav a{text-decoration:none;color:var(--muted)}
 .top nav a:hover{color:var(--paper)}
@@ -118,8 +119,23 @@ a{color:inherit}
 }
 .piece:active{transform:scale(.98)}
 
+/* Opcionales */
+.extras{margin-top:26px}
+.piece.opt{display:flex;flex-direction:column}
+.piece.opt .ph{width:100%;cursor:zoom-in}
+.piece.opt .tx span{color:var(--yellow)}
+.piece.opt .add{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 10px 10px;padding:9px 10px;border-radius:999px;border:1px solid var(--line);font:700 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;transition:background .2s,color .2s,border-color .2s}
+.piece.opt .add:hover{border-color:var(--yellow);color:var(--yellow)}
+.piece.opt .add .ok{display:none}
+.piece.opt .add .mas::before{content:"+ "}
+.piece.opt.on{border-color:var(--yellow)}
+.piece.opt.on .add{background:var(--yellow);color:var(--ink);border-color:var(--yellow)}
+.piece.opt.on .add .mas{display:none}
+.piece.opt.on .add .ok{display:inline}
+.piece.opt.on .add .ok::before{content:"\2713  "}
+
 /* Detalle debajo */
-.below{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:16px;margin-top:28px}
+.below{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:16px;margin-top:28px;align-items:start}
 .panel{border-radius:var(--radius);background:var(--ink-2);border:1px solid var(--line);padding:18px}
 .specs{margin:0;padding:0;list-style:none}
 .specs li{position:relative;padding:8px 0 8px 22px;border-bottom:1px solid var(--line);font-size:16px}
@@ -178,7 +194,7 @@ td .sub{display:block;color:var(--muted);font-size:14px}
 /* ---------- Pie ---------- */
 footer{margin-top:84px;padding:36px 0 120px;border-top:1px solid var(--line);color:var(--muted);font-size:15px}
 footer .wrap{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center}
-footer img{height:30px;width:auto}
+footer img{height:26px;width:auto}
 footer a{text-decoration:none;display:inline-flex;align-items:center;gap:8px}
 footer a:hover{color:var(--yellow)}
 footer .legal{flex-basis:100%;color:var(--muted-2);font-size:13px}
@@ -230,6 +246,7 @@ footer .legal{flex-basis:100%;color:var(--muted-2);font-size:13px}
   .tab span{font-size:12px}
   .pieces{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .buy .btn-wa{margin-left:0;width:100%;justify-content:center}
+  .h3{flex-direction:column;align-items:flex-start;gap:6px}
   .others{grid-template-columns:1fr}
   .stage{aspect-ratio:4/5}
 }
@@ -252,7 +269,7 @@ footer .legal{flex-basis:100%;color:var(--muted-2);font-size:13px}
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#" aria-label="IRON PULSE Equipamientos"><img src="img/logo.png" alt="IRON PULSE Equipamientos" width="57" height="34"></a>
+    <a class="brand" href="#" aria-label="IRON PULSE Equipamientos"><img src="img/logo-ironpulse.png" alt="IRON PULSE Equipamientos" width="167" height="30"></a>
     <nav aria-label="Secciones">
       <a href="#racks">Racks</a>
       <a href="#comparar">Comparar</a>
@@ -295,6 +312,10 @@ footer .legal{flex-basis:100%;color:var(--muted-2);font-size:13px}
         </div>
         <h3 class="h3">Qué trae <small id="piecesHint">Pasá el mouse para verla grande</small></h3>
         <div class="pieces" id="pieces"></div>
+        <div class="extras" id="extrasWrap">
+          <h3 class="h3">Para sumar <small>Opcionales · marcalos y van en la consulta</small></h3>
+          <div class="pieces" id="extras"></div>
+        </div>
       </div>
     </div>
 
@@ -316,7 +337,7 @@ footer .legal{flex-basis:100%;color:var(--muted-2);font-size:13px}
   <section id="comparar" class="section wrap">
     <div class="section-head">
       <h2>¿Cuál me sirve?</h2>
-      <p>Los tres usan el mismo caño y los mismos soportes. Cambia cómo se paran y cuánto encierran.</p>
+      <p>Los tres usan el mismo caño. Cambia cómo se paran, cuánto encierran y qué traen de fábrica.</p>
     </div>
     <div class="compare tbl-wrap"><table id="compare"></table></div>
     <div class="note"><svg class="ico" style="color:var(--yellow)"><use href="#i-right"/></svg><span><b>Se puede crecer.</b> Del 1.0 se pasa al 2.0 o al 3.0 sumando piezas: lo que ya tenés se sigue usando.</span></div>
@@ -333,7 +354,7 @@ footer .legal{flex-basis:100%;color:var(--muted-2);font-size:13px}
 
 <footer>
   <div class="wrap">
-    <img src="img/logo.png" alt="IRON PULSE Equipamientos" width="50" height="30">
+    <img src="img/logo-ironpulse.png" alt="IRON PULSE Equipamientos" width="145" height="26">
     <a id="footWa" href="#" target="_blank" rel="noopener"><svg class="ico"><use href="#i-wa"/></svg><span id="footWaTxt">WhatsApp</span></a>
     <a id="footIg" href="#" target="_blank" rel="noopener"><svg class="ico"><use href="#i-ig"/></svg><span id="footIgTxt">Instagram</span></a>
     <span class="legal" id="legal">Precios de contado. Pueden cambiar sin aviso: confirmalos por WhatsApp antes de comprar.</span>
@@ -424,7 +445,7 @@ async function loadData(){
       specs: (p.specs || '').split(/\||\n/).map(s => s.trim()).filter(Boolean),
       piezas: piezas.filter(x => x.producto_id === p.id)
                     .sort((a, b) => (+a.orden || 99) - (+b.orden || 99))
-                    .map(x => ({...x, fotos: list(x.foto)}))
+                    .map(x => ({...x, fotos: list(x.foto), opcional: /^opc/i.test(x.tipo || ''), precioNum: +(String(x.precio || '').replace(/[^\d]/g, '')) || 0}))
     }));
   document.documentElement.dataset.origen = origen;
   return {cfg, productos};
@@ -456,14 +477,41 @@ function setStage(thumbSrc, bigSrc, cap){
 
 /* ---------- Render del rack ---------- */
 let racks = [], current = null, galleryIdx = 0, hoverPiece = null;
+const elegidos = {};                       // opcionales marcados, por rack
+const incluidas = () => current.piezas.filter(x => !x.opcional);
+const conFoto = () => incluidas().filter(x => x.fotos.length);
+const opcionales = () => current.piezas.filter(x => x.opcional);
+const sel = () => (elegidos[current.id] ||= new Set());
 
-function pieceCap(x){ return {t: `${x.cantidad}× ${x.pieza}`, s: [x.medida, x.detalle].filter(Boolean).join(' · ')}; }
+function pieceCap(x){
+  const s = [x.medida, x.detalle].filter(Boolean).join(' · ');
+  return x.opcional
+    ? {t: `${+x.cantidad > 1 ? x.cantidad + '× ' : ''}${x.pieza} · opcional`, s}
+    : {t: `${x.cantidad}× ${x.pieza}`, s};
+}
+const optPrecio = x => x.precioNum ? '+ ' + fmt.format(x.precioNum) : 'Precio a confirmar';
 
 function showGallery(i){
   galleryIdx = i;
   const f = current.fotos[i];
   if (f) setStage(th(f), big(f), null);
   [...$('#thumbs').children].forEach((b, j) => b.setAttribute('aria-current', j === i));
+}
+
+/* precio, WhatsApp y barra fija según los opcionales elegidos */
+function updateBuy(){
+  const ops = opcionales().filter(x => sel().has(x.pieza));
+  const sinPrecio = ops.some(x => !x.precioNum);
+  const total = current.precioNum + ops.reduce((n, x) => n + x.precioNum, 0);
+  $('#pPrice').textContent = ops.length && current.precioNum && !sinPrecio ? fmt.format(total) : precioTxt(current);
+  let nota = notaTxt(current);
+  const n = ops.length, pl = n > 1 ? 'es' : '';
+  if (n) nota = (nota ? nota + ' · ' : '') + (sinPrecio ? `+ ${n} opcional${pl} a confirmar` : `con ${n} opcional${pl}`);
+  $('#pNota').textContent = nota;
+  const msg = waMsg(current) + (n ? ` Me interesa sumar: ${ops.map(x => x.pieza.toLowerCase()).join(', ')}.` : '');
+  $('#pWa').href = $('#dWa').href = waLink(msg);
+  $('#dName').textContent = current.nombre + (n ? ` + ${n}` : '');
+  $('#dPrice').textContent = $('#pPrice').textContent + (n && sinPrecio ? ` · +${n} a confirmar` : '');
 }
 
 function selectRack(id, push){
@@ -473,59 +521,74 @@ function selectRack(id, push){
   $('#pTag').textContent = current.etiqueta || '';
   $('#pTag').hidden = !current.etiqueta;
   $('#pBajada').textContent = current.bajada || '';
-  $('#pPrice').textContent = precioTxt(current);
-  $('#pNota').textContent = notaTxt(current);
-  $('#pWa').href = $('#dWa').href = waLink(waMsg(current));
-  $('#dName').textContent = current.nombre;
-  $('#dPrice').textContent = precioTxt(current) + (notaTxt(current) ? ' · ' + notaTxt(current).toLowerCase() : '');
 
   $('#thumbs').innerHTML = current.fotos.map((f, i) =>
     `<button type="button" data-i="${i}" aria-label="Foto ${i + 1} del ${esc(current.nombre)}"><img src="${th(f)}" alt="" loading="lazy"></button>`).join('');
   $('#thumbs').hidden = current.fotos.length < 2;
   showGallery(0);
 
-  const conFoto = current.piezas.filter(x => x.fotos.length);
-  $('#pieces').innerHTML = conFoto.map((x, i) => `
-    <button type="button" class="piece" data-i="${i}" aria-label="${esc(pieceCap(x).t)}, ver en grande">
+  $('#pieces').innerHTML = conFoto().map((x, i) => `
+    <button type="button" class="piece" data-k="inc" data-i="${i}" aria-label="${esc(pieceCap(x).t)}, ver en grande">
       <span class="ph"><img src="${th(x.fotos[0])}" alt="${esc(x.pieza)}" loading="lazy"></span>
       <span class="qty">${esc(x.cantidad)}×</span>
       ${x.fotos.length > 1 ? `<span class="more">${x.fotos.length} fotos</span>` : ''}
       <span class="tx"><b>${esc(x.pieza)}</b><span>${esc(x.medida || x.detalle || '')}</span></span>
     </button>`).join('');
-  $('#pieces').dataset.ids = '';
   $('#piecesHint').textContent = canHover ? 'Pasá el mouse para verla grande' : 'Tocá una pieza para verla grande';
 
+  const ops = opcionales();
+  $('#extrasWrap').hidden = !ops.length;
+  $('#extras').innerHTML = ops.map((x, i) => `
+    <div class="piece opt${sel().has(x.pieza) ? ' on' : ''}" data-k="opt" data-i="${i}">
+      <button type="button" class="ph" aria-label="Ver ${esc(x.pieza)} en grande">${x.fotos[0] ? `<img src="${th(x.fotos[0])}" alt="${esc(x.pieza)}" loading="lazy">` : ''}</button>
+      ${+x.cantidad > 1 ? `<span class="qty">${esc(x.cantidad)}×</span>` : ''}
+      <span class="tx"><b>${esc(x.pieza)}</b><span>${esc(optPrecio(x))}</span></span>
+      <button type="button" class="add" aria-pressed="${sel().has(x.pieza)}" aria-label="Sumar ${esc(x.pieza)} a la consulta"><span class="mas">Sumar</span><span class="ok">Sumado</span></button>
+    </div>`).join('');
+
   $('#specs').innerHTML = current.specs.map(s => `<li>${esc(s)}</li>`).join('');
-  $('#despieceN').textContent = `${current.piezas.length} ítems`;
-  $('#despieceBody').innerHTML = current.piezas.map(x =>
+  const inc = incluidas();
+  $('#despieceN').textContent = `${inc.length} ítems`;
+  $('#despieceBody').innerHTML = inc.map(x =>
     `<tr><td class="n">${esc(x.cantidad)}</td><td>${esc(x.pieza)}${x.detalle ? `<span class="sub">${esc(x.detalle)}</span>` : ''}</td><td>${esc(x.medida || '—')}</td></tr>`).join('');
 
+  updateBuy();
   renderCompare();
   if (push) history.replaceState(null, '', '#' + current.id);
 }
 
-/* piezas: hover agranda y cambia el escenario; click abre el visor */
-function pieceItems(){
-  return current.piezas.filter(x => x.fotos.length)
-    .flatMap(x => x.fotos.map(f => ({src: big(f), thumb: th(f), ...pieceCap(x)})));
-}
-$('#pieces').addEventListener('mouseover', e => {
-  if (!canHover) return;
-  const b = e.target.closest('.piece'); if (!b || b === hoverPiece) return;
-  hoverPiece = b;
-  const x = current.piezas.filter(p => p.fotos.length)[+b.dataset.i];
-  setStage(th(x.fotos[0]), big(x.fotos[0]), pieceCap(x));
-});
-$('#pieces').addEventListener('mouseleave', () => { hoverPiece = null; showGallery(galleryIdx); });
-$('#pieces').addEventListener('click', e => {
-  const b = e.target.closest('.piece'); if (!b) return;
-  const con = current.piezas.filter(p => p.fotos.length);
-  const start = con.slice(0, +b.dataset.i).reduce((n, p) => n + p.fotos.length, 0);
-  openLB(pieceItems(), start, b);
+/* piezas y opcionales: hover agranda y cambia el escenario; click abre el visor */
+const itemsOf = arr => arr.flatMap(x => x.fotos.map(f => ({src: big(f), thumb: th(f), ...pieceCap(x)})));
+const cardPiece = el => (el.dataset.k === 'opt' ? opcionales() : conFoto())[+el.dataset.i];
+['#pieces', '#extras'].forEach(id => {
+  const grid = $(id);
+  grid.addEventListener('mouseover', e => {
+    if (!canHover) return;
+    const b = e.target.closest('.piece'); if (!b || b === hoverPiece) return;
+    const x = cardPiece(b); if (!x || !x.fotos.length) return;
+    hoverPiece = b;
+    setStage(th(x.fotos[0]), big(x.fotos[0]), pieceCap(x));
+  });
+  grid.addEventListener('mouseleave', () => { hoverPiece = null; showGallery(galleryIdx); });
+  grid.addEventListener('click', e => {
+    const b = e.target.closest('.piece'); if (!b) return;
+    const x = cardPiece(b);
+    const add = e.target.closest('.add');
+    if (add){
+      sel().has(x.pieza) ? sel().delete(x.pieza) : sel().add(x.pieza);
+      const on = sel().has(x.pieza);
+      b.classList.toggle('on', on); add.setAttribute('aria-pressed', on);
+      updateBuy(); return;
+    }
+    if (!x.fotos.length) return;
+    const lista = b.dataset.k === 'opt' ? opcionales().filter(p => p.fotos.length) : conFoto();
+    const start = lista.slice(0, lista.indexOf(x)).reduce((n, p) => n + p.fotos.length, 0);
+    openLB(itemsOf(lista), start, b);
+  });
 });
 $('#thumbs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) showGallery(+b.dataset.i); });
 function openStage(){
-  if (hoverPiece){ hoverPiece.click(); return; }
+  if (hoverPiece){ (hoverPiece.dataset.k === 'opt' ? hoverPiece.querySelector('.ph') : hoverPiece).click(); return; }
   openLB(current.fotos.map(f => ({src: big(f), thumb: th(f), t: current.nombre, s: current.etiqueta || ''})), galleryIdx, $('#stage'));
 }
 $('#stage').addEventListener('click', openStage);
@@ -543,13 +606,15 @@ $('#tabs').addEventListener('keydown', e => {
 /* ---------- Comparador ---------- */
 function renderCompare(){
   const has = (r, re) => r.piezas.find(x => re.test(x.pieza));
+  const estado = (r, re) => { const p = has(r, re); return !p ? 'No' : p.opcional ? 'Opcional' : (+p.cantidad > 1 ? `Incluidos (${p.cantidad})` : 'Incluida'); };
   const rows = [
     ['Cómo va', r => r.fijacion || '—'],
     ['Tipo', r => r.tipo || '—'],
     ['Parantes', r => { const p = has(r, /parante/i); return p ? `${p.cantidad} de ${p.medida}` : '—'; }],
-    ['Porta discos', r => { const p = has(r, /porta ?discos/i); return p ? `Sí, ${p.cantidad}` : 'No'; }],
-    ['Soportes de seguridad', r => has(r, /seguridad/i) ? 'Sí' : 'No'],
-    ['Barra de dominadas', r => has(r, /dominadas/i) ? 'Sí' : 'No'],
+    ['Ganchos J', r => estado(r, /gancho/i)],
+    ['Soportes de seguridad', r => estado(r, /seguridad/i)],
+    ['Barra de dominadas', r => estado(r, /dominadas/i)],
+    ['Porta discos', r => estado(r, /porta ?discos/i)],
     ['Se puede pasar a', r => r.crece_a || '—'],
     ['Precio', r => precioTxt(r)],
   ];

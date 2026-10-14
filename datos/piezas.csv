@@ -1,33 +1,38 @@
-producto_id,orden,cantidad,pieza,medida,detalle,foto
-rack3,1,4,Parante vertical,2150 mm,Perforado en las 4 caras,pieza_parante
-rack3,2,2,Soporte de barra (J),,"Chapa de 4,75 mm con traba pasante","pieza_soporte-barra_1,pieza_soporte-barra_2"
-rack3,3,2,Soporte de seguridad,400 mm,Con guarda de acero inoxidable,"pieza_soporte-seguridad_1,pieza_soporte-seguridad_2,pieza_soporte-seguridad_3"
-rack3,4,6,Porta discos,400 mm,Caño de 45 mm con tapa con logo,"pieza_porta-discos_1,pieza_porta-discos_2"
-rack3,5,8,Escuadra de ángulo,180 × 180 mm,"Chapa de 4,75 mm",pieza_escuadra-base
-rack3,6,1,Chapa con logo,1210 × 40 mm,Plegada a 90°,pieza_chapa-logo
-rack3,7,8,Tapa con logo láser,50 × 50 mm,Cierra cada caño,pieza_tapa-logo
-rack3,8,2,Base lateral,1300 mm,Perforada en 2 caras,
-rack3,9,2,Travesaño de fondo,1100 mm,Perforado en 2 caras,
-rack3,10,2,Lateral superior,500 mm,Perforado en las 4 caras,
-rack3,11,1,Barra de dominadas,1110 mm,Caño de 27 mm (3/4″),
-rack3,12,10,Planchuela de unión,120 × 50 mm,8 ciegas y 2 con agujero para la barra,
-rack3,13,50,Bulones,1/2″ × 6 cm,Con arandelas,
-rack2,1,2,Parante vertical,2150 mm,Perforado en las 4 caras,pieza_parante
-rack2,2,2,Soporte de barra (J),,"Chapa de 4,75 mm con traba pasante","pieza_soporte-barra_1,pieza_soporte-barra_2"
-rack2,3,2,Soporte de seguridad,400 mm,Con guarda de acero inoxidable,"pieza_soporte-seguridad_1,pieza_soporte-seguridad_2,pieza_soporte-seguridad_3"
-rack2,4,4,Escuadra de ángulo,180 × 180 mm,"Chapa de 4,75 mm",pieza_escuadra-base
-rack2,5,6,Tapa con logo láser,50 × 50 mm,Cierra cada caño,pieza_tapa-logo
-rack2,6,2,Base lateral,1300 mm,Perforada en 2 caras,
-rack2,7,1,Travesaño de fondo,1100 mm,Perforado en 2 caras,
-rack2,8,1,Barra de dominadas,1110 mm,Caño de 27 mm (3/4″),
-rack2,9,4,Planchuela de unión,120 × 50 mm,2 ciegas y 2 con agujero para la barra,
-rack2,10,16,Bulones,1/2″ × 6 cm,Con arandelas,
-rack1,1,2,Parante vertical,2200 mm,Perforado en las 4 caras,pieza_parante
-rack1,2,2,Soporte de barra (J),,"Chapa de 4,75 mm con traba pasante","pieza_soporte-barra_1,pieza_soporte-barra_2"
-rack1,3,2,Soporte de seguridad,400 mm,Con guarda de acero inoxidable,"pieza_soporte-seguridad_1,pieza_soporte-seguridad_2,pieza_soporte-seguridad_3"
-rack1,4,2,Tapa con logo láser,50 × 50 mm,Cierra cada caño,pieza_tapa-logo
-rack1,5,2,Lateral superior,500 mm,Va a la pared,
-rack1,6,1,Barra de dominadas,1110 mm,Caño de 27 mm (3/4″),
-rack1,7,6,Planchuela de unión,120 × 50 mm,4 ciegas y 2 con agujero para la barra,
-rack1,8,4,Anclaje en L al piso,70 × 50 mm,"Chapa de 4,75 mm",
-rack1,9,8,Bulones,1/2″ × 6 cm,Con arandelas,
+"producto_id","orden","tipo","cantidad","pieza","medida","detalle","foto","precio","","","","","","","","","","","","","","","","",""
+"rack3","1","incluido","4","Parante vertical","2150 mm","Perforado en las 4 caras","render_parante,pieza_parante","","","","","","","","","","","","","","","","","",""
+"rack3","2","incluido","2","Gancho J","","Sostiene la barra cargada","render_gancho-j,gancho-j_1","","","","","","","","","","","","","","","","","",""
+"rack3","3","incluido","2","Soporte de seguridad","400 mm","Con guarda de acero inoxidable","render_soporte-seguridad,pieza_soporte-seguridad_1,pieza_soporte-seguridad_2,pieza_soporte-seguridad_3","","","","","","","","","","","","","","","","","",""
+"rack3","4","incluido","1","Barra de dominadas","1110 mm","Caño de 27 mm (3/4″)","render_barra-dominadas","","","","","","","","","","","","","","","","","",""
+"rack3","5","incluido","2","Travesaño de fondo","1100 mm","Perforado en 2 caras","render_fondo","","","","","","","","","","","","","","","","","",""
+"rack3","6","incluido","2","Lateral superior","500 mm","Une adelante con atrás","render_lateral-superior","","","","","","","","","","","","","","","","","",""
+"rack3","7","incluido","8","Escuadra de ángulo","180 × 180 mm","Chapa de 4,75 mm","render_escuadra,pieza_escuadra-base","","","","","","","","","","","","","","","","","",""
+"rack3","8","incluido","1","Chapa con logo","1210 × 40 mm","Plegada a 90°","render_chapa-logo,pieza_chapa-logo","","","","","","","","","","","","","","","","","",""
+"rack3","9","incluido","8","Tapa con logo láser","50 × 50 mm","Cierra cada caño","pieza_tapa-logo","","","","","","","","","","","","","","","","","",""
+"rack3","10","incluido","2","Base lateral","1300 mm","Perforada en 2 caras","","","","","","","","","","","","","","","","","","",""
+"rack3","11","incluido","10","Planchuela de unión","120 × 50 mm","8 ciegas y 2 con agujero para la barra","","","","","","","","","","","","","","","","","","",""
+"rack3","12","incluido","50","Bulones","1/2″ × 6 cm","Con arandelas","","","","","","","","","","","","","","","","","","",""
+"rack3","20","opcional","1","Porta discos","400 mm","Caño de 45 mm con tapa con logo","render_porta-discos,pieza_porta-discos_1,pieza_porta-discos_2","","","","","","","","","","","","","","","","","",""
+"rack3","21","opcional","1","Soporte de barra","","Para dejar la barra reposando","pieza_soporte-barra_1,pieza_soporte-barra_2","","","","","","","","","","","","","","","","","",""
+"rack2","1","incluido","2","Parante vertical","2150 mm","Perforado en las 4 caras","render_parante,pieza_parante","","","","","","","","","","","","","","","","","",""
+"rack2","2","incluido","2","Gancho J","","Sostiene la barra cargada","render_gancho-j,gancho-j_1","","","","","","","","","","","","","","","","","",""
+"rack2","3","incluido","1","Barra de dominadas","1110 mm","Caño de 27 mm (3/4″)","render_barra-dominadas","","","","","","","","","","","","","","","","","",""
+"rack2","4","incluido","1","Travesaño de fondo","1100 mm","Perforado en 2 caras","render_fondo","","","","","","","","","","","","","","","","","",""
+"rack2","5","incluido","4","Escuadra de ángulo","180 × 180 mm","Chapa de 4,75 mm","render_escuadra,pieza_escuadra-base","","","","","","","","","","","","","","","","","",""
+"rack2","6","incluido","6","Tapa con logo láser","50 × 50 mm","Cierra cada caño","pieza_tapa-logo","","","","","","","","","","","","","","","","","",""
+"rack2","7","incluido","2","Base lateral","1300 mm","Perforada en 2 caras","","","","","","","","","","","","","","","","","","",""
+"rack2","8","incluido","4","Planchuela de unión","120 × 50 mm","2 ciegas y 2 con agujero para la barra","","","","","","","","","","","","","","","","","","",""
+"rack2","9","incluido","16","Bulones","1/2″ × 6 cm","Con arandelas","","","","","","","","","","","","","","","","","","",""
+"rack2","20","opcional","2","Soporte de seguridad","400 mm","Con guarda de acero inoxidable","render_soporte-seguridad,pieza_soporte-seguridad_1,pieza_soporte-seguridad_2,pieza_soporte-seguridad_3","","","","","","","","","","","","","","","","","",""
+"rack2","21","opcional","1","Porta discos","400 mm","Caño de 45 mm con tapa con logo","render_porta-discos,pieza_porta-discos_1,pieza_porta-discos_2","","","","","","","","","","","","","","","","","",""
+"rack2","22","opcional","1","Soporte de barra","","Para dejar la barra reposando","pieza_soporte-barra_1,pieza_soporte-barra_2","","","","","","","","","","","","","","","","","",""
+"rack1","1","incluido","2","Parante vertical","2200 mm","Perforado en las 4 caras","render_parante,pieza_parante","","","","","","","","","","","","","","","","","",""
+"rack1","2","incluido","2","Gancho J","","Sostiene la barra cargada","render_gancho-j,gancho-j_1","","","","","","","","","","","","","","","","","",""
+"rack1","3","incluido","1","Barra de dominadas","1110 mm","Caño de 27 mm (3/4″)","render_barra-dominadas","","","","","","","","","","","","","","","","","",""
+"rack1","4","incluido","2","Lateral superior","500 mm","Va a la pared","render_lateral-superior","","","","","","","","","","","","","","","","","",""
+"rack1","5","incluido","2","Tapa con logo láser","50 × 50 mm","Cierra cada caño","pieza_tapa-logo","","","","","","","","","","","","","","","","","",""
+"rack1","6","incluido","4","Anclaje en L al piso","70 × 50 mm","Chapa de 4,75 mm","","","","","","","","","","","","","","","","","","",""
+"rack1","7","incluido","6","Planchuela de unión","120 × 50 mm","4 ciegas y 2 con agujero para la barra","","","","","","","","","","","","","","","","","","",""
+"rack1","8","incluido","8","Bulones","1/2″ × 6 cm","Con arandelas","","","","","","","","","","","","","","","","","","",""
+"rack1","20","opcional","2","Soporte de seguridad","400 mm","Con guarda de acero inoxidable","render_soporte-seguridad,pieza_soporte-seguridad_1,pieza_soporte-seguridad_2,pieza_soporte-seguridad_3","","","","","","","","","","","","","","","","","",""
+"rack1","21","opcional","1","Porta discos","400 mm","Caño de 45 mm con tapa con logo","render_porta-discos,pieza_porta-discos_1,pieza_porta-discos_2","","","","","","","","","","","","","","","","","",""
+"rack1","22","opcional","1","Soporte de barra","","Para dejar la barra reposando","pieza_soporte-barra_1,pieza_soporte-barra_2","","","","","","","","","","","","","","","","","",""

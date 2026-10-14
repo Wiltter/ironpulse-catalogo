@@ -18,7 +18,7 @@ Cambiás una celda, recargás la página y ya está. No hace falta tocar código
 | Pestaña | Qué tiene |
 | --- | --- |
 | **Productos** | Una fila por producto. `precio` sin puntos (ej. `1477750`); vacío = "Consultar precio". `visible` en `NO` lo oculta. `specs` separadas con `\|`. `fotos` separadas con coma. `categoria`: `rack` va arriba con despiece; `otro` va en "También fabricamos". `orden` define el orden |
-| **Piezas** | Una fila por pieza de cada rack (`producto_id` = el `id` del rack). Las que tienen `foto` salen como tarjeta; todas salen en "Despiece completo" |
+| **Piezas** | Una fila por pieza de cada rack (`producto_id` = el `id` del rack). `tipo`: `incluido` (viene con el rack) u `opcional` (sale en "Para sumar" y el cliente lo marca para la consulta). `precio` solo para opcionales; vacío = "Precio a confirmar". Las incluidas con `foto` salen como tarjeta; todas las incluidas salen en "Despiece completo". Para el despiece se usan los renders (`render_…`) primero y después las fotos reales |
 | **Config** | Número de WhatsApp (con 54, sin +), usuario de Instagram, título y subtítulo |
 
 **Nunca** cargar costos ni rentabilidad: la Sheet la puede leer cualquiera que tenga el link.
